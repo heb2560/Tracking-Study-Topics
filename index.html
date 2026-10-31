@@ -9,7 +9,7 @@
   --bg:#F1F3F6; --surface:#FFFFFF; --ink:#111827; --muted:#5B6575; --line:#D8DDE5; --track:#E4E8EE;
   --ink-btn:#111827; --on-btn:#FFFFFF; --hover:#EAEEF3; --danger:#B91C1C; --focus:#2563EB;
   --k0:#64748B; --k1:#2563EB; --k2:#B45309; --k3:#15803D; --k4:#7C3AED; --k5:#BE123C; --k6:#0F766E; --k7:#C2410C;
-  --onk:#FFFFFF;
+  --onk:#FFFFFF; --warn:#B45309; --on-warn:#FFFFFF; --over:#B91C1C; --on-over:#FFFFFF;
   --f-display:"Bai Jamjuree","IBM Plex Sans Thai",system-ui,sans-serif;
   --f-body:"IBM Plex Sans Thai","Noto Sans Thai",system-ui,sans-serif;
 }
@@ -18,16 +18,17 @@
     --bg:#0E1116; --surface:#171B22; --ink:#E8ECF2; --muted:#9AA5B4; --line:#2A313C; --track:#262D38;
     --ink-btn:#E8ECF2; --on-btn:#0E1116; --hover:#1F2530; --danger:#F87171; --focus:#60A5FA;
     --k0:#94A3B8; --k1:#60A5FA; --k2:#FBBF24; --k3:#4ADE80; --k4:#A78BFA; --k5:#FB7185; --k6:#2DD4BF; --k7:#FB923C;
-    --onk:#0B1220; color-scheme:dark;
+    --onk:#0B1220; --warn:#FBBF24; --on-warn:#0B1220; --over:#F87171; --on-over:#0B1220; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0E1116; --surface:#171B22; --ink:#E8ECF2; --muted:#9AA5B4; --line:#2A313C; --track:#262D38;
   --ink-btn:#E8ECF2; --on-btn:#0E1116; --hover:#1F2530; --danger:#F87171; --focus:#60A5FA;
   --k0:#94A3B8; --k1:#60A5FA; --k2:#FBBF24; --k3:#4ADE80; --k4:#A78BFA; --k5:#FB7185; --k6:#2DD4BF; --k7:#FB923C;
-  --onk:#0B1220; color-scheme:dark;
+  --onk:#0B1220; --warn:#FBBF24; --on-warn:#0B1220; --over:#F87171; --on-over:#0B1220; color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;
   padding-block:0 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .wrap{max-width:980px;margin:0 auto}
@@ -98,6 +99,9 @@ nav.tabs button[aria-current="page"]{color:var(--ink);border-bottom-color:var(--
 .group>h3 .pct{color:var(--muted);font-size:.9rem;font-weight:600}
 ul.list{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .topic{display:grid;grid-template-columns:2rem minmax(0,1fr) auto auto;gap:8px 12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+.topic.near{background:color-mix(in srgb,var(--warn) 12%,var(--surface));box-shadow:inset 4px 0 0 var(--warn)}
+.topic.over{background:color-mix(in srgb,var(--over) 12%,var(--surface));box-shadow:inset 4px 0 0 var(--over)}
+.topic .seg{grid-column:2/-1}
 .topic:first-child{border-top:0}
 .topic .idx{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.8rem;font-family:var(--f-display)}
 .tname{border:1px solid transparent;background:transparent;border-radius:6px;padding:5px 8px;min-width:0;width:100%}
@@ -163,12 +167,49 @@ textarea.code{width:100%;min-height:130px;border:1px solid var(--line);backgroun
 
 @media (max-width:720px){
   .topic{grid-template-columns:2rem minmax(0,1fr) auto}
-  .topic .seg{grid-column:1/-1;padding-left:2.5rem}
+  .topic .due{grid-column:2/3;grid-row:2}
+  .topic .xbtn{grid-column:3;grid-row:1}
+  .topic .seg{grid-column:2/-1}
+  .tbarw{padding-inline:12px}
   .stage{grid-template-columns:minmax(0,1fr) auto}
   .stage .swatches,.stage input[type=text]{grid-column:1/-1}
   .hero .big .pct{font-size:2.8rem}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* หัวข้อย่อย (การ์ด) และ Deadline */
+.tcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.thead{display:flex;align-items:center;gap:10px;padding:10px 12px;flex-wrap:wrap}
+.thead .tn{font-family:var(--f-display);font-weight:600;font-size:1.02rem;border:1px solid transparent;background:transparent;border-radius:6px;padding:4px 8px;min-width:0;flex:1 1 160px}
+.thead .tn:hover,.thead .tn:focus{border-color:var(--line);background:var(--bg)}
+.fold{border:0;background:transparent;width:34px;height:34px;border-radius:6px;color:var(--muted);font-size:1rem}
+.fold:hover{background:var(--hover)}
+.tsum{color:var(--muted);font-size:.85rem;white-space:nowrap}
+.tbarw{padding:0 14px 10px}
+.tcard .list{border:0;border-top:1px solid var(--line);border-radius:0}
+.tempty{padding:12px 16px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+.addrow.in{margin:0;padding:10px 12px;border-top:1px solid var(--line)}
+.addrow.in input{min-height:36px}
+.tlabel{font-family:var(--f-display);font-weight:600;font-size:.92rem;color:var(--muted);margin:10px 2px 6px}
+.badge{display:inline-flex;align-items:center;border-radius:99px;padding:1px 10px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.badge.near{background:var(--warn);color:var(--on-warn)}
+.badge.over{background:var(--over);color:var(--on-over)}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.due{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.dinput{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:3px 8px;min-height:34px;font-size:.85rem}
+.chip.near::before{display:none}
+.filters .sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+.dlbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px;display:grid;gap:6px}
+.dlbox .hd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.dlbox h2{font-size:1.05rem}
+.dlbox label{font-size:.88rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+.dlbox input[type=number]{width:68px;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:4px 8px;min-height:34px}
+.dlrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;width:100%;border:0;border-top:1px solid var(--line);background:transparent;padding:8px 4px;min-height:44px}
+.dlrow:hover{background:var(--hover)}
+.dlrow .path{overflow-wrap:anywhere}
+.dlrow .path small{color:var(--muted);display:block}
+.notice{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;color:var(--muted);font-size:.88rem;margin:0 0 16px}
+.setup code{background:var(--track);border-radius:4px;padding:0 5px}
 </style>
 
 <div class="wrap" id="root"></div>
@@ -178,8 +219,8 @@ textarea.code{width:100%;min-height:130px;border:1px solid var(--line);backgroun
 <script>
 (function(){
 "use strict";
-var KEY="study-tracker-v1", TKEY="study-tracker-theme";
-var DRAFT_SLOTS=6; /* จำนวนช่องวิชาที่แสดงในหน้าตั้งต้น ไม่ใช่ขั้นต่ำ */
+var KEY="study-tracker-v2", OLDKEY="study-tracker-v1", TKEY="study-tracker-theme";
+var DRAFT_SLOTS=6, MAX_SHOW=8;
 var COLOR_NAMES=["เทา","น้ำเงิน","เหลืองส้ม","เขียว","ม่วง","แดงกุหลาบ","เขียวหยก","ส้ม"];
 var DEFAULT_STAGES=[
   {id:"s1",name:"ยังไม่อ่าน",color:0,done:false},
@@ -194,10 +235,25 @@ function $(s){return document.querySelector(s);}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 function uid(){return "x"+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);}
 function clone(o){return JSON.parse(JSON.stringify(o));}
+function pad(n){return (n<10?"0":"")+n;}
 
-function fresh(){return {v:1,setup:false,stages:clone(DEFAULT_STAGES),subjects:[]};}
+/* ---------- dates ---------- */
+var TH_M=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+function todayStr(){var d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+function dayNum(str){var p=str.split("-");return Date.UTC(+p[0],+p[1]-1,+p[2])/86400000;}
+function daysUntil(due){return Math.round(dayNum(due)-dayNum(todayStr()));}
+function fmtDate(str){var p=str.split("-"),y=+p[0];return (+p[2])+" "+TH_M[+p[1]-1]+(y!==new Date().getFullYear()?" "+(y+543):"");}
+function validDate(s){
+  if(typeof s!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  var p=s.split("-"), d=new Date(Date.UTC(+p[0],+p[1]-1,+p[2]));
+  return d.getUTCFullYear()===+p[0]&&d.getUTCMonth()===+p[1]-1&&d.getUTCDate()===+p[2];
+}
+
+/* ---------- state ---------- */
+function fresh(){return {v:2,setup:false,settings:{warnDays:3},stages:clone(DEFAULT_STAGES),subjects:[]};}
 function normalize(o){
   if(!o||typeof o!=="object") throw "ข้อมูลนี้ไม่ใช่ไฟล์ของแอปนี้";
+  if(o.v!==2) throw "ไฟล์นี้เป็นรูปแบบเวอร์ชันเก่า (วิชา → หัวข้อ) นำเข้าในเวอร์ชันนี้ไม่ได้";
   var seen={};
   var stages=(Array.isArray(o.stages)?o.stages:[]).map(function(s){
     var id=String(s&&s.id||uid()); if(seen[id]) id=uid(); seen[id]=1;
@@ -205,14 +261,18 @@ function normalize(o){
   });
   if(stages.length<2) throw "Pipeline ต้องมีอย่างน้อย 2 ขั้นตอน";
   if(!stages.some(function(s){return s.done;})) stages[stages.length-1].done=true;
+  var wd=parseInt(o.settings&&o.settings.warnDays,10); if(isNaN(wd)) wd=3; wd=Math.max(0,Math.min(60,wd));
   var subjects=(Array.isArray(o.subjects)?o.subjects:[]).map(function(s,i){
-    var tops=(Array.isArray(s&&s.topics)?s.topics:[]).map(function(t,j){
-      var st=stages.some(function(x){return x.id===(t&&t.stage);})?t.stage:stages[0].id;
-      return {id:String(t&&t.id||uid()),name:String(t&&t.name||"").trim()||("หัวข้อ "+(j+1)),stage:st};
+    var topics=(Array.isArray(s&&s.topics)?s.topics:[]).map(function(t,j){
+      var items=(Array.isArray(t&&t.items)?t.items:[]).map(function(it,k){
+        var st=stages.some(function(x){return x.id===(it&&it.stage);})?it.stage:stages[0].id;
+        return {id:String(it&&it.id||uid()),name:String(it&&it.name||"").trim()||("หัวข้อย่อย 2 ข้อที่ "+(k+1)),stage:st,due:validDate(it&&it.due)?it.due:null};
+      });
+      return {id:String(t&&t.id||uid()),name:String(t&&t.name||"").trim()||("หัวข้อย่อย "+(j+1)),items:items};
     });
-    return {id:String(s&&s.id||uid()),name:String(s&&s.name||"").trim()||("วิชา "+(i+1)),topics:tops};
+    return {id:String(s&&s.id||uid()),name:String(s&&s.name||"").trim()||("วิชา "+(i+1)),topics:topics};
   });
-  return {v:1,setup:true,stages:stages,subjects:subjects};
+  return {v:2,setup:true,settings:{warnDays:wd},stages:stages,subjects:subjects};
 }
 function load(){
   var raw=lsGet(KEY);
@@ -220,27 +280,38 @@ function load(){
   return fresh();
 }
 var S=load();
-var U={view:S.setup?"overview":"setup",subj:"all",filter:"all",modal:null,draft:null};
+var U={view:S.setup?"overview":"setup",subj:"all",filter:"all",near:false,fold:{},modal:null,draft:null};
 var undoSnap=null;
 function save(){lsSet(KEY,JSON.stringify(S));}
 
-/* theme */
 function effTheme(){
-  var t=document.documentElement.getAttribute("data-theme");
-  if(t) return t;
+  var t=document.documentElement.getAttribute("data-theme"); if(t) return t;
   return (window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";
 }
 (function(){var t=lsGet(TKEY); if(t==="dark"||t==="light") document.documentElement.setAttribute("data-theme",t);})();
 
-/* helpers */
+/* ---------- helpers ---------- */
 function stageById(id){return S.stages.filter(function(s){return s.id===id;})[0];}
-function stats(topics){
+function itemsOf(sub){var a=[]; sub.topics.forEach(function(t){a=a.concat(t.items);}); return a;}
+function allItems(){var a=[]; S.subjects.forEach(function(s){a=a.concat(itemsOf(s));}); return a;}
+function stats(items){
   var c={}; S.stages.forEach(function(s){c[s.id]=0;});
-  topics.forEach(function(t){if(c[t.stage]!==undefined) c[t.stage]++;});
+  items.forEach(function(t){if(c[t.stage]!==undefined) c[t.stage]++;});
   var done=0; S.stages.forEach(function(s){if(s.done) done+=c[s.id];});
-  return {c:c,total:topics.length,done:done,pct:topics.length?Math.round(done/topics.length*100):0};
+  return {c:c,total:items.length,done:done,pct:items.length?Math.round(done/items.length*100):0};
 }
-function allTopics(){var a=[]; S.subjects.forEach(function(s){a=a.concat(s.topics);}); return a;}
+function dueInfo(it){
+  if(!it.due) return null;
+  var st=stageById(it.stage); if(st&&st.done) return null;
+  var d=daysUntil(it.due);
+  if(d<0) return {kind:"over",d:d,label:"⚠ เลยมา "+(-d)+" วัน"};
+  if(d<=S.settings.warnDays) return {kind:"near",d:d,label:"⏰ "+(d===0?"วันนี้":d===1?"พรุ่งนี้":"อีก "+d+" วัน")};
+  return null;
+}
+function dueCounts(items){var n=0,o=0; items.forEach(function(it){var i=dueInfo(it); if(i){if(i.kind==="over") o++; else n++;}}); return {near:n,over:o};}
+function dueBadges(c){
+  return (c.over?'<span class="badge over">⚠ เลยกำหนด '+c.over+'</span>':"")+(c.near?'<span class="badge near">⏰ ใกล้กำหนด '+c.near+'</span>':"");
+}
 function barHtml(st,lg){
   var lab=S.stages.map(function(s){return s.name+" "+st.c[s.id];}).join(", ");
   var segs=S.stages.map(function(s){
@@ -256,11 +327,20 @@ function toast(msg,undo){
   clearTimeout(toast.t); toast.t=setTimeout(function(){el.hidden=true;undoSnap=null;},5500);
 }
 function snapshot(){undoSnap=JSON.stringify(S);}
+function findSub(id){return S.subjects.filter(function(s){return s.id===id;})[0];}
+function findTopic(sid,tid){var s=findSub(sid); return s&&s.topics.filter(function(t){return t.id===tid;})[0];}
+function findItem(sid,tid,iid){var t=findTopic(sid,tid); return t&&t.items.filter(function(i){return i.id===iid;})[0];}
+function filtered(){return U.filter!=="all"||U.near;}
+function visItems(tp){
+  var out=[]; tp.items.forEach(function(it,i){
+    if((U.filter==="all"||it.stage===U.filter)&&(!U.near||dueInfo(it))) out.push([it,i]);
+  }); return out;
+}
 
-/* views */
+/* ---------- views ---------- */
 function headerHtml(){
   var dark=effTheme()==="dark";
-  return '<header class="top"><div class="brand">เช็คลิสต์อ่านหนังสือ<small>ติดตามทุกหัวข้อ ตั้งแต่ยังไม่อ่านจนทำควิซเสร็จ</small></div>'+
+  return '<header class="top"><div class="brand">เช็คลิสต์อ่านหนังสือ<small>วิชา › หัวข้อย่อย › หัวข้อย่อย 2 ติดตามตั้งแต่ยังไม่อ่านจนทำควิซเสร็จ</small></div>'+
     '<button class="btn" data-act="theme" data-fk="theme" aria-pressed="'+dark+'">'+(dark?"โหมดสว่าง":"โหมดมืด")+'</button></header>';
 }
 function navHtml(){
@@ -269,80 +349,125 @@ function navHtml(){
     return '<button data-act="nav" data-v="'+t[0]+'" data-fk="nav-'+t[0]+'"'+(U.view===t[0]?' aria-current="page"':"")+'>'+t[1]+'</button>';
   }).join("")+'</nav>';
 }
+function dueList(){
+  var arr=[];
+  S.subjects.forEach(function(s){s.topics.forEach(function(t){t.items.forEach(function(it){
+    var i=dueInfo(it); if(i) arr.push({s:s,t:t,it:it,i:i});
+  });});});
+  arr.sort(function(a,b){return a.i.d-b.i.d;});
+  return arr;
+}
 function overviewHtml(){
-  var all=stats(allTopics());
-  var h='<section class="hero"><div class="big"><span class="pct" data-testid="total-pct">'+all.pct+'%</span><span>ความคืบหน้ารวม · '+all.done+' จาก '+all.total+' หัวข้อ นับเป็นเสร็จ</span></div>'+
+  var all=stats(allItems());
+  var h='<section class="hero"><div class="big"><span class="pct" data-testid="total-pct">'+all.pct+'%</span><span>ความคืบหน้ารวม · '+all.done+' จาก '+all.total+' หัวข้อย่อย 2 นับเป็นเสร็จ</span></div>'+
     barHtml(all,true)+'<div class="legend">'+S.stages.map(function(s){
       return '<button class="chip c'+s.color+'" data-act="go-stage" data-st="'+s.id+'">'+esc(s.name)+' <b>'+all.c[s.id]+'</b></button>';
     }).join("")+'</div></section>';
+  var dl=dueList();
+  h+='<section class="dlbox" aria-labelledby="dlh"><div class="hd"><h2 id="dlh">งานใกล้กำหนด <span class="hint">('+dl.length+')</span></h2>'+
+    '<label for="warnDays">เตือนล่วงหน้า <input type="number" id="warnDays" data-act="warn-days" data-fk="warn" min="0" max="60" value="'+S.settings.warnDays+'"> วัน</label></div>';
+  if(!dl.length) h+='<p class="hint" style="margin:0">ไม่มีงานที่ใกล้หรือเลยกำหนด (ใส่ Deadline ได้ที่หัวข้อย่อย 2 ในแท็บ "หัวข้อ")</p>';
+  else {
+    dl.slice(0,MAX_SHOW).forEach(function(r){
+      h+='<button class="dlrow" data-act="open-subj" data-s="'+r.s.id+'"><span class="badge '+r.i.kind+'">'+r.i.label+'</span>'+
+        '<span class="path">'+esc(r.it.name)+' <small>'+esc(r.s.name)+' › '+esc(r.t.name)+'</small></span><span class="hint">'+fmtDate(r.it.due)+'</span></button>';
+    });
+    if(dl.length>MAX_SHOW) h+='<div class="row"><span class="hint">และอีก '+(dl.length-MAX_SHOW)+' รายการ</span><button class="btn sm" data-act="go-near">ดูทั้งหมด</button></div>';
+  }
+  h+='</section>';
   if(!S.subjects.length) return h+'<div class="sect"><h2>รายวิชา (0)</h2></div><div class="empty">ยังไม่มีวิชา<br><br><button class="btn primary" data-act="add-subj">+ เพิ่มวิชาแรก</button></div>';
   h+='<div class="sect"><h2>รายวิชา ('+S.subjects.length+')</h2><span class="hint">กดที่วิชาเพื่อดูหัวข้อ</span></div><div class="grid">';
   S.subjects.forEach(function(sub){
-    var st=stats(sub.topics);
+    var items=itemsOf(sub), st=stats(items), dc=dueCounts(items);
     h+='<button class="scard" data-act="open-subj" data-s="'+sub.id+'"><div class="h"><span class="nm">'+esc(sub.name)+'</span><span class="pct">'+st.pct+'%</span></div>'+barHtml(st)+
-      '<div class="m"><span class="c-all" style="--sc:var(--ink)">'+st.done+'/'+st.total+' เสร็จ</span>'+
-      S.stages.filter(function(s){return st.c[s.id]>0;}).map(function(s){return '<span class="c'+s.color+'">'+esc(s.name)+' '+st.c[s.id]+'</span>';}).join("")+'</div></button>';
+      '<div class="m"><span style="--sc:var(--ink)">'+st.done+'/'+st.total+' เสร็จ · '+sub.topics.length+' หัวข้อย่อย</span>'+
+      S.stages.filter(function(s){return st.c[s.id]>0;}).map(function(s){return '<span class="c'+s.color+'">'+esc(s.name)+' '+st.c[s.id]+'</span>';}).join("")+'</div>'+
+      (dc.near||dc.over?'<div class="badges">'+dueBadges(dc)+'</div>':"")+'</button>';
   });
   return h+"</div>";
 }
-function topicRow(sub,t,i,single){
+function itemRow(sub,tp,it,i,single){
+  var info=dueInfo(it);
   var seg=S.stages.map(function(s){
-    var on=t.stage===s.id;
-    return '<button class="c'+s.color+(on?" on":"")+'" role="radio" aria-checked="'+on+'" data-act="set-stage" data-s="'+sub.id+'" data-t="'+t.id+'" data-st="'+s.id+'" data-fk="st-'+t.id+'-'+s.id+'">'+esc(s.name)+'</button>';
+    var on=it.stage===s.id;
+    return '<button class="c'+s.color+(on?" on":"")+'" role="radio" aria-checked="'+on+'" data-act="set-stage" data-s="'+sub.id+'" data-tp="'+tp.id+'" data-it="'+it.id+'" data-st="'+s.id+'" data-fk="st-'+it.id+'-'+s.id+'">'+esc(s.name)+'</button>';
   }).join("");
-  return '<li class="topic" data-t="'+t.id+'"><span class="idx">'+String(i+1).padStart(2,"0")+'</span>'+
-    '<input class="tname" aria-label="ชื่อหัวข้อ" value="'+esc(t.name)+'" data-act="rename-topic" data-s="'+sub.id+'" data-t="'+t.id+'">'+
-    (single?'<button class="xbtn" data-act="del-topic" data-s="'+sub.id+'" data-t="'+t.id+'" aria-label="ลบหัวข้อ '+esc(t.name)+'"">ลบ</button>':'<span></span>')+
-    '<div class="seg" role="radiogroup" aria-label="สถานะ '+esc(t.name)+'">'+seg+'</div></li>';
+  var ids='data-s="'+sub.id+'" data-tp="'+tp.id+'" data-it="'+it.id+'"';
+  return '<li class="topic'+(info?" "+info.kind:"")+'" data-it="'+it.id+'"><span class="idx">'+pad(i+1)+'</span>'+
+    '<input class="tname" aria-label="ชื่อหัวข้อย่อย 2" value="'+esc(it.name)+'" data-act="rename-item" '+ids+'>'+
+    '<div class="due">'+(info?'<span class="badge '+info.kind+'">'+info.label+'</span>':"")+
+    '<input type="date" class="dinput" aria-label="Deadline ของ '+esc(it.name)+'" value="'+(it.due||"")+'" data-act="set-due" '+ids+'></div>'+
+    (single?'<button class="xbtn" data-act="del-item" '+ids+' aria-label="ลบหัวข้อย่อย 2 '+esc(it.name)+'">ลบ</button>':'<span></span>')+
+    '<div class="seg" role="radiogroup" aria-label="สถานะ '+esc(it.name)+'">'+seg+'</div></li>';
+}
+function topicCard(sub,tp){
+  var vis=visItems(tp);
+  if(filtered()&&!vis.length) return "";
+  var st=stats(tp.items), dc=dueCounts(tp.items), folded=!!U.fold[tp.id];
+  var h='<section class="tcard" data-tp="'+tp.id+'"><div class="thead">'+
+    '<button class="fold" data-act="fold" data-tp="'+tp.id+'" data-fk="fold-'+tp.id+'" aria-expanded="'+(!folded)+'" aria-label="พับหรือขยาย '+esc(tp.name)+'">'+(folded?"▸":"▾")+'</button>'+
+    '<input class="tn" aria-label="ชื่อหัวข้อย่อย" value="'+esc(tp.name)+'" data-act="rename-topic" data-s="'+sub.id+'" data-tp="'+tp.id+'">'+
+    '<span class="tsum" data-testid="tsum">เสร็จ '+st.done+'/'+st.total+'</span>'+dueBadges(dc)+
+    '<button class="xbtn" data-act="del-topic" data-s="'+sub.id+'" data-tp="'+tp.id+'" aria-label="ลบหัวข้อย่อย '+esc(tp.name)+'">ลบ</button></div>';
+  if(st.total) h+='<div class="tbarw">'+barHtml(st)+'</div>';
+  if(!folded){
+    if(vis.length) h+='<ul class="list">'+vis.map(function(p){return itemRow(sub,tp,p[0],p[1],true);}).join("")+'</ul>';
+    else h+='<div class="tempty">ยังไม่มีหัวข้อย่อย 2</div>';
+    if(!filtered()) h+='<div class="addrow in"><input id="ni-'+tp.id+'" class="newitem" data-s="'+sub.id+'" data-tp="'+tp.id+'" data-fk="ni-'+tp.id+'" placeholder="เพิ่มหัวข้อย่อย 2 ใต้ \''+esc(tp.name)+'\' แล้วกด Enter" aria-label="ชื่อหัวข้อย่อย 2 ใหม่ ใน '+esc(tp.name)+'"><button class="btn sm" data-act="add-item" data-s="'+sub.id+'" data-tp="'+tp.id+'">เพิ่ม</button></div>';
+  }
+  return h+'</section>';
 }
 function topicsHtml(){
-  if(U.subj!=="all"&&!S.subjects.some(function(s){return s.id===U.subj;})) U.subj="all";
+  if(U.subj!=="all"&&!findSub(U.subj)) U.subj="all";
   if(U.filter!=="all"&&!stageById(U.filter)) U.filter="all";
   var single=U.subj!=="all";
-  var scope=single?S.subjects.filter(function(s){return s.id===U.subj;}):S.subjects;
-  var scopeTopics=[]; scope.forEach(function(s){scopeTopics=scopeTopics.concat(s.topics);});
-  var cs=stats(scopeTopics);
+  var scope=single?[findSub(U.subj)]:S.subjects;
+  var scopeItems=[]; scope.forEach(function(s){scopeItems=scopeItems.concat(itemsOf(s));});
+  var cs=stats(scopeItems), dc=dueCounts(scopeItems);
   var h='<div class="subtabs" role="group" aria-label="เลือกวิชา"><button data-act="pick-subj" data-s="all" data-fk="ps-all" aria-pressed="'+!single+'">ทุกวิชา</button>'+
     S.subjects.map(function(s){return '<button data-act="pick-subj" data-s="'+s.id+'" data-fk="ps-'+s.id+'" aria-pressed="'+(U.subj===s.id)+'">'+esc(s.name)+'</button>';}).join("")+
     '<button class="add" data-act="add-subj">+ เพิ่มวิชา</button></div>';
-  h+='<div class="filters" role="group" aria-label="กรองตามสถานะ"><span class="lb">กรอง:</span>'+
+  h+='<div class="filters" role="group" aria-label="กรอง"><span class="lb">กรอง:</span>'+
     '<button class="chip" data-act="filter" data-st="all" data-fk="f-all" aria-pressed="'+(U.filter==="all")+'">ทั้งหมด <b>'+cs.total+'</b></button>'+
-    S.stages.map(function(s){return '<button class="chip c'+s.color+'" data-act="filter" data-st="'+s.id+'" data-fk="f-'+s.id+'" aria-pressed="'+(U.filter===s.id)+'">'+esc(s.name)+' <b>'+cs.c[s.id]+'</b></button>';}).join("")+'</div>';
-  function visible(sub){
-    var out=[]; sub.topics.forEach(function(t,i){ if(U.filter==="all"||t.stage===U.filter) out.push([t,i]); }); return out;
-  }
+    S.stages.map(function(s){return '<button class="chip c'+s.color+'" data-act="filter" data-st="'+s.id+'" data-fk="f-'+s.id+'" aria-pressed="'+(U.filter===s.id)+'">'+esc(s.name)+' <b>'+cs.c[s.id]+'</b></button>';}).join("")+
+    '<span class="sep" aria-hidden="true"></span><button class="chip near" data-act="filter-near" data-fk="f-near" aria-pressed="'+U.near+'">⏰ ใกล้กำหนด <b>'+(dc.near+dc.over)+'</b></button></div>';
+  if(!S.subjects.length) return h+'<div class="empty">ยังไม่มีวิชา กด "+ เพิ่มวิชา" ด้านบน</div>';
   if(single){
-    var sub=scope[0], st=stats(sub.topics), vis=visible(sub);
+    var sub=scope[0], st=stats(itemsOf(sub)), sdc=dueCounts(itemsOf(sub));
     h+='<div class="subhead"><div class="r"><input class="sname" aria-label="ชื่อวิชา" value="'+esc(sub.name)+'" data-act="rename-subj" data-s="'+sub.id+'">'+
       '<span class="pct" data-testid="subj-pct">'+st.pct+'%</span>'+
-      '<button class="btn sm danger" data-act="del-subj" data-s="'+sub.id+'"">ลบวิชานี้</button></div>'+barHtml(st)+
-      '<span class="hint">'+sub.topics.length+' หัวข้อ · เสร็จแล้ว '+st.done+'</span></div>';
-    if(vis.length){
-      h+='<ul class="list">'+vis.map(function(p){return topicRow(sub,p[0],p[1],true);}).join("")+'</ul>';
-    } else h+='<div class="empty">'+(sub.topics.length?'ไม่มีหัวข้อในสถานะนี้':'วิชานี้ยังไม่มีหัวข้อ เพิ่มหัวข้อแรกด้านล่าง')+'</div>';
-    h+='<div class="addrow"><input id="newTopic" data-fk="newTopic" placeholder="ชื่อหัวข้อใหม่ แล้วกด Enter" aria-label="ชื่อหัวข้อใหม่"><button class="btn primary" data-act="add-topic" data-s="'+sub.id+'">เพิ่มหัวข้อ</button></div>';
+      '<button class="btn sm danger" data-act="del-subj" data-s="'+sub.id+'">ลบวิชานี้</button></div>'+barHtml(st)+
+      '<div class="r"><span class="hint">'+sub.topics.length+' หัวข้อย่อย · '+st.total+' หัวข้อย่อย 2 · เสร็จแล้ว '+st.done+'</span>'+dueBadges(sdc)+'</div></div>';
+    var cards=sub.topics.map(function(tp){return topicCard(sub,tp);}).join("");
+    if(cards) h+=cards;
+    else h+='<div class="empty">'+(filtered()?'ไม่มีหัวข้อย่อย 2 ที่ตรงกับตัวกรอง':'วิชานี้ยังไม่มีหัวข้อย่อย เพิ่มหัวข้อย่อยแรกด้านล่าง')+'</div>';
+    h+='<div class="addrow"><input id="newTopic" data-fk="newTopic" placeholder="ชื่อหัวข้อย่อยใหม่ แล้วกด Enter" aria-label="ชื่อหัวข้อย่อยใหม่"><button class="btn primary" data-act="add-topic" data-s="'+sub.id+'">เพิ่มหัวข้อย่อย</button></div>';
   } else {
     var shown=0;
     S.subjects.forEach(function(sub){
-      var vis=visible(sub); if(!vis.length) return; shown++;
-      var st=stats(sub.topics);
-      h+='<section class="group"><h3>'+esc(sub.name)+' <span class="pct">'+st.pct+'%</span> <button class="btn sm" data-act="open-subj" data-s="'+sub.id+'">จัดการวิชา</button></h3>'+
-        '<ul class="list">'+vis.map(function(p){return topicRow(sub,p[0],p[1],false);}).join("")+'</ul></section>';
+      var parts="";
+      sub.topics.forEach(function(tp){
+        var vis=visItems(tp); if(filtered()&&!vis.length) return;
+        parts+='<div class="tlabel">'+esc(tp.name)+'</div>'+(vis.length?'<ul class="list">'+vis.map(function(p){return itemRow(sub,tp,p[0],p[1],false);}).join("")+'</ul>':'<div class="tempty">ยังไม่มีหัวข้อย่อย 2</div>');
+      });
+      if(!parts) return; shown++;
+      var st=stats(itemsOf(sub));
+      h+='<section class="group"><h3>'+esc(sub.name)+' <span class="pct">'+st.pct+'%</span> <button class="btn sm" data-act="open-subj" data-s="'+sub.id+'">จัดการวิชา</button></h3>'+parts+'</section>';
     });
-    if(!shown) h+='<div class="empty">'+(!S.subjects.length?'ยังไม่มีวิชา กด "+ เพิ่มวิชา" ด้านบน':!scopeTopics.length?'ยังไม่มีหัวข้อ เลือกวิชาแล้วเพิ่มหัวข้อ':'ไม่มีหัวข้อในสถานะนี้')+'</div>';
+    if(!shown) h+='<div class="empty">'+(filtered()?'ไม่มีหัวข้อย่อย 2 ที่ตรงกับตัวกรอง':'ยังไม่มีหัวข้อย่อย เลือกวิชาแล้วเพิ่มหัวข้อย่อย')+'</div>';
   }
   return h;
 }
 function pipelineHtml(){
-  var all=stats(allTopics());
-  var h='<div class="panel"><h3>เส้นทางของแต่ละหัวข้อ</h3><p>ใช้ร่วมกันทุกวิชา ปรับชื่อ สี ลำดับ และเพิ่มหรือลบขั้นตอนได้ ติ๊ก "นับเป็นเสร็จ" ที่ขั้นตอนที่ถือว่าอ่านครบแล้ว เพื่อใช้คำนวณ %</p>'+
+  var all=stats(allItems());
+  var h='<div class="panel"><h3>เส้นทางของแต่ละหัวข้อย่อย 2</h3><p>ใช้ร่วมกันทุกวิชา ปรับชื่อ สี ลำดับ และเพิ่มหรือลบขั้นตอนได้ ติ๊ก "นับเป็นเสร็จ" ที่ขั้นตอนที่ถือว่าอ่านครบแล้ว เพื่อใช้คำนวณ % และเลิกเตือน Deadline</p>'+
     '<div class="chain">'+S.stages.map(function(s,i){return (i?'<span class="arr" aria-hidden="true">→</span>':"")+'<span class="node c'+s.color+'">'+esc(s.name)+'</span>';}).join("")+'</div>';
   h+='<ul class="list" style="border-radius:10px">'+S.stages.map(function(s,i){
     var sw=[0,1,2,3,4,5,6,7].map(function(k){return '<button class="c'+k+'" role="radio" aria-checked="'+(s.color===k)+'" aria-label="สี'+COLOR_NAMES[k]+'" data-act="stage-color" data-st="'+s.id+'" data-k="'+k+'"></button>';}).join("");
     return '<li class="stage c'+s.color+'"><div class="swatches" role="radiogroup" aria-label="สีของขั้นตอน">'+sw+'</div>'+
       '<input type="text" aria-label="ชื่อขั้นตอน" value="'+esc(s.name)+'" data-act="stage-name" data-st="'+s.id+'">'+
       '<label><input type="checkbox" data-act="stage-done" data-st="'+s.id+'"'+(s.done?" checked":"")+'> นับเป็นเสร็จ</label>'+
-      '<span class="cnt">'+all.c[s.id]+' หัวข้อ</span>'+
+      '<span class="cnt">'+all.c[s.id]+' หัวข้อย่อย 2</span>'+
       '<span class="ops"><button class="btn sm" data-act="stage-up" data-st="'+s.id+'" data-fk="up-'+s.id+'" aria-label="เลื่อนขึ้น" aria-disabled="'+(i===0)+'">▲</button>'+
       '<button class="btn sm" data-act="stage-down" data-st="'+s.id+'" data-fk="dn-'+s.id+'" aria-label="เลื่อนลง" aria-disabled="'+(i===S.stages.length-1)+'">▼</button>'+
       '<button class="btn sm danger" data-act="stage-del" data-st="'+s.id+'" aria-disabled="'+(S.stages.length<=2)+'">ลบ</button></span></li>';
@@ -350,58 +475,74 @@ function pipelineHtml(){
   h+='<div class="row"><button class="btn primary" data-act="stage-add">+ เพิ่มขั้นตอน</button><span class="hint">ต้องมีอย่างน้อย 2 ขั้นตอน และอย่างน้อย 1 ขั้นที่นับเป็นเสร็จ</span></div></div>';
   return h;
 }
-function exportJson(){return JSON.stringify({v:1,app:"study-tracker",stages:S.stages,subjects:S.subjects},null,2);}
+function exportJson(){return JSON.stringify({v:2,app:"study-tracker",settings:S.settings,stages:S.stages,subjects:S.subjects},null,2);}
 function dataHtml(){
   return '<div class="panel"><h3>สำรองข้อมูล</h3><p>ข้อมูลถูกเก็บในเบราว์เซอร์นี้เท่านั้น ถ้าล้างข้อมูลเว็บหรือเปลี่ยนเครื่อง ข้อมูลจะหาย จึงควรสำรองไว้เป็นระยะ</p>'+
     '<textarea class="code" id="exportText" readonly aria-label="ข้อมูลสำรอง">'+esc(exportJson())+'</textarea>'+
     '<div class="row"><button class="btn primary" data-act="copy">คัดลอกข้อมูล</button><button class="btn" data-act="download">ดาวน์โหลดเป็นไฟล์ .json</button></div></div>'+
-    '<div class="panel"><h3>นำเข้าข้อมูล</h3><p>วางข้อมูลสำรองลงในช่อง หรือเลือกไฟล์ .json การนำเข้าจะแทนที่ข้อมูลปัจจุบันทั้งหมด</p>'+
+    '<div class="panel"><h3>นำเข้าข้อมูล</h3><p>วางข้อมูลสำรองลงในช่อง หรือเลือกไฟล์ .json การนำเข้าจะแทนที่ข้อมูลปัจจุบันทั้งหมด (ไฟล์สำรองจากเวอร์ชันเก่าที่ไม่มีหัวข้อย่อย 2 นำเข้าไม่ได้)</p>'+
     '<textarea class="code" id="importText" aria-label="วางข้อมูลที่ต้องการนำเข้า" placeholder="{ ... }"></textarea>'+
     '<div class="row"><input type="file" id="importFile" accept=".json,application/json" aria-label="เลือกไฟล์ข้อมูล"><button class="btn primary" data-act="import">นำเข้า</button></div></div>'+
     '<div class="panel"><h3>เริ่มใหม่ทั้งหมด</h3><p>ลบวิชา หัวข้อ และ Pipeline ทั้งหมด แล้วกลับไปหน้าตั้งต้น</p><div class="row"><button class="btn danger" data-act="reset">ล้างข้อมูลทั้งหมด</button></div></div>';
 }
-/* setup */
-function initDraft(){U.draft=[];for(var i=0;i<DRAFT_SLOTS;i++) U.draft.push({name:"",text:""});}
-function lineCount(txt){return txt.split(/\n/).map(function(x){return x.trim();}).filter(Boolean).length;}
+/* ---------- setup ---------- */
+function initDraft(){U.draft=[]; for(var i=0;i<DRAFT_SLOTS;i++) U.draft.push({name:"",text:""});}
+function parseDraft(text){
+  var topics=[], cur=null;
+  text.split(/\r?\n/).forEach(function(raw){
+    if(!raw.trim()) return;
+    var isSub=/^(\s*[-•*]|\t|\s{2,}\S)/.test(raw);
+    var name=raw.replace(/^\s*[-•*]\s*/,"").trim(); if(!name) return;
+    if(isSub&&cur) cur.items.push(name); else {cur={name:name,items:[]}; topics.push(cur);}
+  });
+  return topics;
+}
+function countText(text){
+  var t=parseDraft(text), m=0; t.forEach(function(x){m+=x.items.length;});
+  return t.length+" หัวข้อย่อย · "+m+" หัวข้อย่อย 2";
+}
 function setupHtml(){
   if(!U.draft) initDraft();
-  var h='<section class="setup"><h1>ตั้งต้นรายวิชา</h1><p class="lead">ใส่ชื่อวิชาและหัวข้อย่อยของแต่ละวิชา พิมพ์หนึ่งบรรทัดต่อหนึ่งหัวข้อ หรือวางรายการที่คัดลอกมาได้เลย จะมีกี่วิชากี่หัวข้อก็ได้ ช่องที่เว้นว่างทั้งชื่อและหัวข้อจะไม่ถูกสร้าง และเพิ่มหรือแก้ไขได้ทีหลัง</p><div class="dgrid">';
+  var old=lsGet(OLDKEY);
+  var h='<section class="setup"><h1>ตั้งต้นรายวิชา</h1><p class="lead">ใส่ชื่อวิชาและหัวข้อของแต่ละวิชา หนึ่งบรรทัดต่อหนึ่งหัวข้อย่อย ถ้าจะใส่หัวข้อย่อย 2 ไว้ข้างใต้ ให้ขึ้นต้นบรรทัดด้วย <code>-</code> หรือเว้นวรรค 2 ช่อง จะมีกี่วิชากี่หัวข้อก็ได้ ช่องที่เว้นว่างจะไม่ถูกสร้าง Deadline ใส่ภายหลังได้ในหน้าหัวข้อ</p>';
+  if(old) h+='<p class="notice">พบข้อมูลของเวอร์ชันเก่า (วิชา → หัวข้อ) ในเบราว์เซอร์นี้ ระบบไม่ได้นำมาใช้และยังไม่ลบทิ้ง</p>';
+  h+='<div class="dgrid">';
   U.draft.forEach(function(d,i){
-    var n=lineCount(d.text);
-    h+='<div class="dcard"><div class="r"><span class="no">วิชาที่ '+(i+1)+'</span><button class="btn sm danger" data-act="draft-del" data-i="'+i+'"">ลบ</button></div>'+
+    h+='<div class="dcard"><div class="r"><span class="no">วิชาที่ '+(i+1)+'</span><button class="btn sm danger" data-act="draft-del" data-i="'+i+'">ลบ</button></div>'+
       '<input data-act="draft-name" data-i="'+i+'" placeholder="วิชา '+(i+1)+'" aria-label="ชื่อวิชาที่ '+(i+1)+'" value="'+esc(d.name)+'">'+
-      '<textarea data-act="draft-text" data-i="'+i+'" aria-label="หัวข้อย่อยของวิชาที่ '+(i+1)+'" placeholder="หัวข้อ 1&#10;หัวข้อ 2&#10;...">'+esc(d.text)+'</textarea>'+
-      '<span class="dcount'+(n>0?" ok":"")+'" data-i="'+i+'">'+n+' หัวข้อ</span></div>';
+      '<textarea data-act="draft-text" data-i="'+i+'" aria-label="หัวข้อของวิชาที่ '+(i+1)+'" placeholder="บทที่ 1&#10;- หัวข้อย่อย 2 ก&#10;- หัวข้อย่อย 2 ข&#10;บทที่ 2">'+esc(d.text)+'</textarea>'+
+      '<span class="dcount" data-i="'+i+'">'+countText(d.text)+'</span></div>';
   });
-  h+='</div><div class="actions"><button class="btn" data-act="draft-add">+ เพิ่มวิชา</button><button class="btn primary" data-act="finish-setup">เริ่มใช้งาน</button><button class="btn" data-act="skip-setup">ข้าม เริ่มแบบว่าง</button></div></section>';
-  return h;
+  return h+'</div><div class="actions"><button class="btn" data-act="draft-add">+ เพิ่มวิชา</button><button class="btn primary" data-act="finish-setup">เริ่มใช้งาน</button><button class="btn" data-act="skip-setup">ข้าม เริ่มแบบว่าง</button></div></section>';
 }
-function buildSubjects(useDraft){
-  var subs=[]; if(!useDraft) return subs;
-  U.draft.forEach(function(d,i){
-    var lines=d.text.split(/\n/).map(function(x){return x.trim();}).filter(Boolean);
-    var name=d.name.trim();
-    if(!name&&!lines.length) return;
-    subs.push({id:uid(),name:name||("วิชา "+(subs.length+1)),topics:lines.map(function(nm){return {id:uid(),name:nm,stage:S.stages[0].id};})});
+function buildSubjects(){
+  var subs=[], first=S.stages[0].id;
+  U.draft.forEach(function(d){
+    var tps=parseDraft(d.text), name=d.name.trim();
+    if(!name&&!tps.length) return;
+    subs.push({id:uid(),name:name||("วิชา "+(subs.length+1)),topics:tps.map(function(t){
+      return {id:uid(),name:t.name,items:t.items.map(function(n){return {id:uid(),name:n,stage:first,due:null};})};
+    })});
   });
   return subs;
 }
-/* modal */
+/* ---------- modal ---------- */
 function modalHtml(){
   var m=U.modal, b="";
-  if(m.type==="add-subj") b='<h2 id="mt">เพิ่มวิชา</h2><p>วิชาใหม่จะยังไม่มีหัวข้อ เพิ่มหัวข้อได้หลังสร้างวิชาแล้ว</p><input id="modalInput" data-autofocus placeholder="ชื่อวิชา" aria-label="ชื่อวิชา"><div class="acts"><button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">เพิ่มวิชา</button></div>';
-  if(m.type==="del-subj"){var s=S.subjects.filter(function(x){return x.id===m.id;})[0]; b='<h2 id="mt">ลบวิชา "'+esc(s.name)+'" ?</h2><p>หัวข้อทั้ง '+s.topics.length+' หัวข้อและสถานะที่ติ๊กไว้จะหายไป</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ลบวิชา</button></div>';}
-  if(m.type==="del-stage"){var cur=stageById(m.id), n=m.count;
-    b='<h2 id="mt">ลบขั้นตอน "'+esc(cur.name)+'" ?</h2><p>มี '+n+' หัวข้ออยู่ในขั้นตอนนี้ เลือกขั้นตอนที่จะย้ายหัวข้อเหล่านั้นไป</p><select id="modalSel" data-autofocus aria-label="ย้ายไปขั้นตอน">'+
+  if(m.type==="add-subj") b='<h2 id="mt">เพิ่มวิชา</h2><p>วิชาใหม่จะยังไม่มีหัวข้อ เพิ่มหัวข้อย่อยได้หลังสร้างวิชาแล้ว</p><input id="modalInput" data-autofocus placeholder="ชื่อวิชา" aria-label="ชื่อวิชา"><div class="acts"><button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">เพิ่มวิชา</button></div>';
+  if(m.type==="del-subj"){var s=findSub(m.id), n=itemsOf(s).length; b='<h2 id="mt">ลบวิชา "'+esc(s.name)+'" ?</h2><p>หัวข้อย่อย '+s.topics.length+' หัวข้อ และหัวข้อย่อย 2 อีก '+n+' หัวข้อ รวมสถานะและ Deadline จะหายไป</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ลบวิชา</button></div>';}
+  if(m.type==="del-topic"){var tp=findTopic(m.s,m.tp); b='<h2 id="mt">ลบหัวข้อย่อย "'+esc(tp.name)+'" ?</h2><p>หัวข้อย่อย 2 ที่อยู่ข้างใน '+tp.items.length+' หัวข้อ รวมสถานะและ Deadline จะหายไปด้วย</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ลบหัวข้อย่อย</button></div>';}
+  if(m.type==="del-stage"){var cur=stageById(m.id);
+    b='<h2 id="mt">ลบขั้นตอน "'+esc(cur.name)+'" ?</h2><p>มี '+m.count+' หัวข้อย่อย 2 อยู่ในขั้นตอนนี้ เลือกขั้นตอนที่จะย้ายไป</p><select id="modalSel" data-autofocus aria-label="ย้ายไปขั้นตอน">'+
       S.stages.filter(function(x){return x.id!==m.id;}).map(function(x){return '<option value="'+x.id+'">'+esc(x.name)+'</option>';}).join("")+'</select><div class="acts"><button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">ย้ายแล้วลบ</button></div>';}
   if(m.type==="reset") b='<h2 id="mt">ล้างข้อมูลทั้งหมด ?</h2><p>ลบทุกวิชา ทุกหัวข้อ และ Pipeline ที่แก้ไว้ ไม่สามารถเลิกทำได้ ควรสำรองข้อมูลก่อน</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ล้างข้อมูล</button></div>';
   return '<div class="scrim" data-act="scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">'+b+'</div></div>';
 }
-/* render */
+/* ---------- render ---------- */
 function render(){
   var ae=document.activeElement, fk=ae&&ae.dataset?ae.dataset.fk:null, sy=window.scrollY;
   var h=headerHtml();
-  if(!S.setup){h+=setupHtml();}
+  if(!S.setup) h+=setupHtml();
   else{
     h+=navHtml();
     h+=U.view==="overview"?overviewHtml():U.view==="topics"?topicsHtml():U.view==="pipeline"?pipelineHtml():dataHtml();
@@ -412,13 +553,18 @@ function render(){
   if(U.modal){var f=document.querySelector("#modalRoot [data-autofocus]"); if(f) f.focus();}
   window.scrollTo(0,sy);
 }
-/* actions */
-function findSub(id){return S.subjects.filter(function(s){return s.id===id;})[0];}
+/* ---------- actions ---------- */
 function addTopic(sid){
   var inp=$("#newTopic"), v=inp?inp.value.trim():"";
-  if(!v){toast("พิมพ์ชื่อหัวข้อก่อน");return;}
-  findSub(sid).topics.push({id:uid(),name:v,stage:S.stages[0].id}); save(); render();
+  if(!v){toast("พิมพ์ชื่อหัวข้อย่อยก่อน");return;}
+  findSub(sid).topics.push({id:uid(),name:v,items:[]}); save(); render();
   var n=$("#newTopic"); if(n) n.focus();
+}
+function addItem(sid,tid){
+  var inp=$("#ni-"+tid), v=inp?inp.value.trim():"";
+  if(!v){toast("พิมพ์ชื่อหัวข้อย่อย 2 ก่อน");return;}
+  findTopic(sid,tid).items.push({id:uid(),name:v,stage:S.stages[0].id,due:null}); save(); render();
+  var n=$("#ni-"+tid); if(n) n.focus();
 }
 function closeModal(){U.modal=null; render();}
 function modalOk(){
@@ -428,16 +574,17 @@ function modalOk(){
     var sub={id:uid(),name:nm,topics:[]}; S.subjects.push(sub); U.subj=sub.id; U.view="topics"; save(); U.modal=null; render(); toast("เพิ่มวิชา \""+nm+"\" แล้ว");
   } else if(m.type==="del-subj"){
     snapshot(); S.subjects=S.subjects.filter(function(s){return s.id!==m.id;}); if(U.subj===m.id) U.subj="all"; save(); U.modal=null; render(); toast("ลบวิชาแล้ว",true);
+  } else if(m.type==="del-topic"){
+    snapshot(); var sub2=findSub(m.s); sub2.topics=sub2.topics.filter(function(t){return t.id!==m.tp;}); save(); U.modal=null; render(); toast("ลบหัวข้อย่อยแล้ว",true);
   } else if(m.type==="del-stage"){
     var target=$("#modalSel").value; snapshot();
-    S.subjects.forEach(function(s){s.topics.forEach(function(t){if(t.stage===m.id) t.stage=target;});});
-    removeStage(m.id); U.modal=null; render(); toast("ลบขั้นตอนและย้ายหัวข้อแล้ว",true);
+    S.subjects.forEach(function(s){s.topics.forEach(function(t){t.items.forEach(function(it){if(it.stage===m.id) it.stage=target;});});});
+    removeStage(m.id); U.modal=null; render(); toast("ลบขั้นตอนและย้ายหัวข้อย่อย 2 แล้ว",true);
   } else if(m.type==="reset"){
-    S=fresh(); U={view:"setup",subj:"all",filter:"all",modal:null,draft:null}; try{localStorage.removeItem(KEY);}catch(e){delete mem[KEY];} render(); toast("ล้างข้อมูลแล้ว");
+    S=fresh(); U={view:"setup",subj:"all",filter:"all",near:false,fold:{},modal:null,draft:null}; try{localStorage.removeItem(KEY);}catch(e){delete mem[KEY];} render(); toast("ล้างข้อมูลแล้ว");
   }
 }
 function removeStage(id){
-  var wasDone=stageById(id).done;
   S.stages=S.stages.filter(function(s){return s.id!==id;});
   if(!S.stages.some(function(s){return s.done;})) S.stages[S.stages.length-1].done=true;
   if(U.filter===id) U.filter="all";
@@ -447,7 +594,7 @@ function importNow(){
   var txt=($("#importText").value||"").trim();
   if(!txt){toast("วางข้อมูลหรือเลือกไฟล์ก่อน");return;}
   try{
-    var n=normalize(JSON.parse(txt)); snapshot(); S=n; U.subj="all"; U.filter="all"; save(); U.view="overview"; render(); toast("นำเข้าข้อมูลแล้ว",true);
+    var n=normalize(JSON.parse(txt)); snapshot(); S=n; U.subj="all"; U.filter="all"; U.near=false; save(); U.view="overview"; render(); toast("นำเข้าข้อมูลแล้ว",true);
   }catch(e){toast("นำเข้าไม่ได้: "+(typeof e==="string"?e:"รูปแบบข้อมูลไม่ถูกต้อง"));}
 }
 document.addEventListener("click",function(e){
@@ -457,18 +604,24 @@ document.addEventListener("click",function(e){
   switch(a){
   case "theme": var nt=effTheme()==="dark"?"light":"dark"; document.documentElement.setAttribute("data-theme",nt); lsSet(TKEY,nt); render(); break;
   case "nav": U.view=d.v; render(); break;
-  case "go-stage": U.view="topics"; U.subj="all"; U.filter=d.st; render(); break;
-  case "open-subj": U.view="topics"; U.subj=d.s; U.filter="all"; render(); window.scrollTo(0,0); break;
+  case "go-stage": U.view="topics"; U.subj="all"; U.filter=d.st; U.near=false; render(); break;
+  case "go-near": U.view="topics"; U.subj="all"; U.filter="all"; U.near=true; render(); break;
+  case "open-subj": U.view="topics"; U.subj=d.s; U.filter="all"; U.near=false; render(); window.scrollTo(0,0); break;
   case "pick-subj": U.subj=d.s; render(); break;
   case "filter": U.filter=d.st; render(); break;
-  case "set-stage": findSub(d.s).topics.forEach(function(t){if(t.id===d.t) t.stage=d.st;}); save(); render(); break;
+  case "filter-near": U.near=!U.near; render(); break;
+  case "fold": U.fold[d.tp]=!U.fold[d.tp]; render(); break;
+  case "set-stage": var it=findItem(d.s,d.tp,d.it); if(it){it.stage=d.st; save(); render();} break;
   case "add-topic": addTopic(d.s); break;
+  case "add-item": addItem(d.s,d.tp); break;
+  case "del-item":
+    snapshot(); var tp=findTopic(d.s,d.tp); tp.items=tp.items.filter(function(x){return x.id!==d.it;}); save(); render(); toast("ลบหัวข้อย่อย 2 แล้ว",true); break;
   case "del-topic":
-    var sub=findSub(d.s);
-    snapshot(); sub.topics=sub.topics.filter(function(t){return t.id!==d.t;}); save(); render(); toast("ลบหัวข้อแล้ว",true); break;
+    var tp2=findTopic(d.s,d.tp);
+    if(tp2.items.length){U.modal={type:"del-topic",s:d.s,tp:d.tp}; render();}
+    else {snapshot(); var sb=findSub(d.s); sb.topics=sb.topics.filter(function(t){return t.id!==d.tp;}); save(); render(); toast("ลบหัวข้อย่อยแล้ว",true);} break;
   case "add-subj": U.modal={type:"add-subj"}; render(); break;
-  case "del-subj":
-    U.modal={type:"del-subj",id:d.s}; render(); break;
+  case "del-subj": U.modal={type:"del-subj",id:d.s}; render(); break;
   case "modal-cancel": closeModal(); break;
   case "modal-ok": modalOk(); break;
   case "undo": if(undoSnap){S=JSON.parse(undoSnap); undoSnap=null; save(); $("#toast").hidden=true; render();} break;
@@ -482,7 +635,7 @@ document.addEventListener("click",function(e){
     var tmp=S.stages[i]; S.stages[i]=S.stages[j]; S.stages[j]=tmp; save(); render(); break;
   case "stage-del":
     if(S.stages.length<=2){toast("ต้องมีอย่างน้อย 2 ขั้นตอน ลบอีกไม่ได้");break;}
-    var cnt=allTopics().filter(function(t){return t.stage===d.st;}).length;
+    var cnt=allItems().filter(function(t){return t.stage===d.st;}).length;
     if(cnt>0){U.modal={type:"del-stage",id:d.st,count:cnt}; render();}
     else {snapshot(); removeStage(d.st); render(); toast("ลบขั้นตอนแล้ว",true);} break;
   case "copy":
@@ -498,18 +651,17 @@ document.addEventListener("click",function(e){
   case "import": importNow(); break;
   case "reset": U.modal={type:"reset"}; render(); break;
   case "draft-add": U.draft.push({name:"",text:""}); render(); break;
-  case "draft-del":
-    U.draft.splice(+d.i,1); render(); break;
-  case "finish-setup": case "skip-setup":
-    S.subjects=buildSubjects(a==="finish-setup"); S.setup=true; U.view="overview"; U.draft=null; save(); render(); toast("พร้อมใช้งานแล้ว แก้ชื่อวิชาและหัวข้อได้ในแท็บ \"หัวข้อ\""); break;
+  case "draft-del": U.draft.splice(+d.i,1); render(); break;
+  case "finish-setup": S.subjects=buildSubjects(); S.setup=true; U.view="overview"; U.draft=null; save(); render(); toast("พร้อมใช้งานแล้ว เพิ่มและแก้ไขได้ในแท็บ \"หัวข้อ\""); break;
+  case "skip-setup": S.subjects=[]; S.setup=true; U.view="overview"; U.draft=null; save(); render(); toast("เริ่มแบบว่างแล้ว เพิ่มวิชาได้ที่ปุ่ม \"เพิ่มวิชาแรก\""); break;
   }
 });
 document.addEventListener("input",function(e){
   var t=e.target, a=t.dataset&&t.dataset.act;
   if(a==="draft-name") U.draft[+t.dataset.i].name=t.value;
   if(a==="draft-text"){
-    U.draft[+t.dataset.i].text=t.value; var n=lineCount(t.value), c=document.querySelector('.dcount[data-i="'+t.dataset.i+'"]');
-    if(c){c.textContent=n+" หัวข้อ"; c.classList.toggle("ok",n>0);}
+    U.draft[+t.dataset.i].text=t.value; var c=document.querySelector('.dcount[data-i="'+t.dataset.i+'"]');
+    if(c) c.textContent=countText(t.value);
   }
 });
 document.addEventListener("change",function(e){
@@ -517,8 +669,11 @@ document.addEventListener("change",function(e){
   if(t.id==="importFile"&&t.files&&t.files[0]){
     var fr=new FileReader(); fr.onload=function(){$("#importText").value=String(fr.result); toast("อ่านไฟล์แล้ว กด \"นำเข้า\" เพื่อยืนยัน");}; fr.readAsText(t.files[0]); return;
   }
-  if(a==="rename-topic"){var v=t.value.trim(); if(!v){render();return;} findSub(d.s).topics.forEach(function(x){if(x.id===d.t) x.name=v;}); save(); render();}
+  if(a==="rename-topic"){var v=t.value.trim(); if(!v){render();return;} findTopic(d.s,d.tp).name=v; save(); render();}
+  if(a==="rename-item"){var v1=t.value.trim(); if(!v1){render();return;} findItem(d.s,d.tp,d.it).name=v1; save(); render();}
   if(a==="rename-subj"){var v2=t.value.trim(); if(!v2){render();return;} findSub(d.s).name=v2; save(); render();}
+  if(a==="set-due"){var it=findItem(d.s,d.tp,d.it); it.due=validDate(t.value)?t.value:null; save(); render();}
+  if(a==="warn-days"){var n=parseInt(t.value,10); if(isNaN(n)) n=S.settings.warnDays; S.settings.warnDays=Math.max(0,Math.min(60,n)); save(); render();}
   if(a==="stage-name"){var v3=t.value.trim(); if(!v3){render();return;} stageById(d.st).name=v3; save(); render();}
   if(a==="stage-done"){
     var s=stageById(d.st);
@@ -531,8 +686,9 @@ document.addEventListener("keydown",function(e){
   if(e.key!=="Enter") return;
   var t=e.target;
   if(t.id==="newTopic"){e.preventDefault(); var b=document.querySelector('[data-act="add-topic"]'); if(b) addTopic(b.dataset.s);}
+  else if(t.classList&&t.classList.contains("newitem")){e.preventDefault(); addItem(t.dataset.s,t.dataset.tp);}
   else if(t.id==="modalInput"){e.preventDefault(); modalOk();}
-  else if(t.classList&&(t.classList.contains("tname")||t.classList.contains("sname"))){t.blur();}
+  else if(t.classList&&(t.classList.contains("tname")||t.classList.contains("sname")||t.classList.contains("tn"))){t.blur();}
 });
 render();
 })();
