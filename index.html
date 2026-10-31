@@ -179,7 +179,7 @@ textarea.code{width:100%;min-height:130px;border:1px solid var(--line);backgroun
 (function(){
 "use strict";
 var KEY="study-tracker-v1", TKEY="study-tracker-theme";
-var MIN_SUBJ=6, MIN_TOP=10;
+var DRAFT_SLOTS=6; /* จำนวนช่องวิชาที่แสดงในหน้าตั้งต้น ไม่ใช่ขั้นต่ำ */
 var COLOR_NAMES=["เทา","น้ำเงิน","เหลืองส้ม","เขียว","ม่วง","แดงกุหลาบ","เขียวหยก","ส้ม"];
 var DEFAULT_STAGES=[
   {id:"s1",name:"ยังไม่อ่าน",color:0,done:false},
@@ -212,8 +212,6 @@ function normalize(o){
     });
     return {id:String(s&&s.id||uid()),name:String(s&&s.name||"").trim()||("วิชา "+(i+1)),topics:tops};
   });
-  if(subjects.length<MIN_SUBJ) throw "ต้องมีอย่างน้อย "+MIN_SUBJ+" วิชา (ไฟล์นี้มี "+subjects.length+")";
-  subjects.forEach(function(s){ if(s.topics.length<MIN_TOP) throw "วิชา \""+s.name+"\" มีหัวข้อไม่ถึง "+MIN_TOP+" หัวข้อ"; });
   return {v:1,setup:true,stages:stages,subjects:subjects};
 }
 function load(){
@@ -277,6 +275,7 @@ function overviewHtml(){
     barHtml(all,true)+'<div class="legend">'+S.stages.map(function(s){
       return '<button class="chip c'+s.color+'" data-act="go-stage" data-st="'+s.id+'">'+esc(s.name)+' <b>'+all.c[s.id]+'</b></button>';
     }).join("")+'</div></section>';
+  if(!S.subjects.length) return h+'<div class="sect"><h2>รายวิชา (0)</h2></div><div class="empty">ยังไม่มีวิชา<br><br><button class="btn primary" data-act="add-subj">+ เพิ่มวิชาแรก</button></div>';
   h+='<div class="sect"><h2>รายวิชา ('+S.subjects.length+')</h2><span class="hint">กดที่วิชาเพื่อดูหัวข้อ</span></div><div class="grid">';
   S.subjects.forEach(function(sub){
     var st=stats(sub.topics);
@@ -293,7 +292,7 @@ function topicRow(sub,t,i,single){
   }).join("");
   return '<li class="topic" data-t="'+t.id+'"><span class="idx">'+String(i+1).padStart(2,"0")+'</span>'+
     '<input class="tname" aria-label="ชื่อหัวข้อ" value="'+esc(t.name)+'" data-act="rename-topic" data-s="'+sub.id+'" data-t="'+t.id+'">'+
-    (single?'<button class="xbtn" data-act="del-topic" data-s="'+sub.id+'" data-t="'+t.id+'" aria-label="ลบหัวข้อ '+esc(t.name)+'" aria-disabled="'+(sub.topics.length<=MIN_TOP)+'">ลบ</button>':'<span></span>')+
+    (single?'<button class="xbtn" data-act="del-topic" data-s="'+sub.id+'" data-t="'+t.id+'" aria-label="ลบหัวข้อ '+esc(t.name)+'"">ลบ</button>':'<span></span>')+
     '<div class="seg" role="radiogroup" aria-label="สถานะ '+esc(t.name)+'">'+seg+'</div></li>';
 }
 function topicsHtml(){
@@ -316,11 +315,11 @@ function topicsHtml(){
     var sub=scope[0], st=stats(sub.topics), vis=visible(sub);
     h+='<div class="subhead"><div class="r"><input class="sname" aria-label="ชื่อวิชา" value="'+esc(sub.name)+'" data-act="rename-subj" data-s="'+sub.id+'">'+
       '<span class="pct" data-testid="subj-pct">'+st.pct+'%</span>'+
-      '<button class="btn sm danger" data-act="del-subj" data-s="'+sub.id+'" aria-disabled="'+(S.subjects.length<=MIN_SUBJ)+'">ลบวิชานี้</button></div>'+barHtml(st)+
-      '<span class="hint">'+sub.topics.length+' หัวข้อ (ขั้นต่ำ '+MIN_TOP+') · เสร็จแล้ว '+st.done+'</span></div>';
+      '<button class="btn sm danger" data-act="del-subj" data-s="'+sub.id+'"">ลบวิชานี้</button></div>'+barHtml(st)+
+      '<span class="hint">'+sub.topics.length+' หัวข้อ · เสร็จแล้ว '+st.done+'</span></div>';
     if(vis.length){
       h+='<ul class="list">'+vis.map(function(p){return topicRow(sub,p[0],p[1],true);}).join("")+'</ul>';
-    } else h+='<div class="empty">ไม่มีหัวข้อในสถานะนี้</div>';
+    } else h+='<div class="empty">'+(sub.topics.length?'ไม่มีหัวข้อในสถานะนี้':'วิชานี้ยังไม่มีหัวข้อ เพิ่มหัวข้อแรกด้านล่าง')+'</div>';
     h+='<div class="addrow"><input id="newTopic" data-fk="newTopic" placeholder="ชื่อหัวข้อใหม่ แล้วกด Enter" aria-label="ชื่อหัวข้อใหม่"><button class="btn primary" data-act="add-topic" data-s="'+sub.id+'">เพิ่มหัวข้อ</button></div>';
   } else {
     var shown=0;
@@ -330,7 +329,7 @@ function topicsHtml(){
       h+='<section class="group"><h3>'+esc(sub.name)+' <span class="pct">'+st.pct+'%</span> <button class="btn sm" data-act="open-subj" data-s="'+sub.id+'">จัดการวิชา</button></h3>'+
         '<ul class="list">'+vis.map(function(p){return topicRow(sub,p[0],p[1],false);}).join("")+'</ul></section>';
     });
-    if(!shown) h+='<div class="empty">ไม่มีหัวข้อในสถานะนี้</div>';
+    if(!shown) h+='<div class="empty">'+(!S.subjects.length?'ยังไม่มีวิชา กด "+ เพิ่มวิชา" ด้านบน':!scopeTopics.length?'ยังไม่มีหัวข้อ เลือกวิชาแล้วเพิ่มหัวข้อ':'ไม่มีหัวข้อในสถานะนี้')+'</div>';
   }
   return h;
 }
@@ -362,35 +361,35 @@ function dataHtml(){
     '<div class="panel"><h3>เริ่มใหม่ทั้งหมด</h3><p>ลบวิชา หัวข้อ และ Pipeline ทั้งหมด แล้วกลับไปหน้าตั้งต้น</p><div class="row"><button class="btn danger" data-act="reset">ล้างข้อมูลทั้งหมด</button></div></div>';
 }
 /* setup */
-function initDraft(){U.draft=[];for(var i=0;i<MIN_SUBJ;i++) U.draft.push({name:"",text:""});}
+function initDraft(){U.draft=[];for(var i=0;i<DRAFT_SLOTS;i++) U.draft.push({name:"",text:""});}
 function lineCount(txt){return txt.split(/\n/).map(function(x){return x.trim();}).filter(Boolean).length;}
 function setupHtml(){
   if(!U.draft) initDraft();
-  var h='<section class="setup"><h1>ตั้งต้นรายวิชา</h1><p class="lead">ใส่ชื่อวิชาอย่างน้อย '+MIN_SUBJ+' วิชา และหัวข้อย่อยอย่างน้อย '+MIN_TOP+' หัวข้อต่อวิชา พิมพ์หนึ่งบรรทัดต่อหนึ่งหัวข้อ หรือวางรายการที่คัดลอกมาได้เลย ช่องที่เว้นไว้ระบบจะเติมชื่อชั่วคราวให้ และแก้ไขได้ทีหลัง</p><div class="dgrid">';
+  var h='<section class="setup"><h1>ตั้งต้นรายวิชา</h1><p class="lead">ใส่ชื่อวิชาและหัวข้อย่อยของแต่ละวิชา พิมพ์หนึ่งบรรทัดต่อหนึ่งหัวข้อ หรือวางรายการที่คัดลอกมาได้เลย จะมีกี่วิชากี่หัวข้อก็ได้ ช่องที่เว้นว่างทั้งชื่อและหัวข้อจะไม่ถูกสร้าง และเพิ่มหรือแก้ไขได้ทีหลัง</p><div class="dgrid">';
   U.draft.forEach(function(d,i){
     var n=lineCount(d.text);
-    h+='<div class="dcard"><div class="r"><span class="no">วิชาที่ '+(i+1)+'</span><button class="btn sm danger" data-act="draft-del" data-i="'+i+'" aria-disabled="'+(U.draft.length<=MIN_SUBJ)+'">ลบ</button></div>'+
+    h+='<div class="dcard"><div class="r"><span class="no">วิชาที่ '+(i+1)+'</span><button class="btn sm danger" data-act="draft-del" data-i="'+i+'"">ลบ</button></div>'+
       '<input data-act="draft-name" data-i="'+i+'" placeholder="วิชา '+(i+1)+'" aria-label="ชื่อวิชาที่ '+(i+1)+'" value="'+esc(d.name)+'">'+
       '<textarea data-act="draft-text" data-i="'+i+'" aria-label="หัวข้อย่อยของวิชาที่ '+(i+1)+'" placeholder="หัวข้อ 1&#10;หัวข้อ 2&#10;...">'+esc(d.text)+'</textarea>'+
-      '<span class="dcount'+(n>=MIN_TOP?" ok":"")+'" data-i="'+i+'">'+n+'/'+MIN_TOP+' หัวข้อ'+(n<MIN_TOP?" · เติมชื่อชั่วคราวให้อัตโนมัติ":"")+'</span></div>';
+      '<span class="dcount'+(n>0?" ok":"")+'" data-i="'+i+'">'+n+' หัวข้อ</span></div>';
   });
-  h+='</div><div class="actions"><button class="btn" data-act="draft-add">+ เพิ่มวิชา</button><button class="btn primary" data-act="finish-setup">เริ่มใช้งาน</button><button class="btn" data-act="skip-setup">ข้าม ใช้ชื่อชั่วคราวทั้งหมด</button></div></section>';
+  h+='</div><div class="actions"><button class="btn" data-act="draft-add">+ เพิ่มวิชา</button><button class="btn primary" data-act="finish-setup">เริ่มใช้งาน</button><button class="btn" data-act="skip-setup">ข้าม เริ่มแบบว่าง</button></div></section>';
   return h;
 }
 function buildSubjects(useDraft){
-  var n=useDraft?U.draft.length:MIN_SUBJ, subs=[];
-  for(var i=0;i<n;i++){
-    var d=useDraft?U.draft[i]:{name:"",text:""};
+  var subs=[]; if(!useDraft) return subs;
+  U.draft.forEach(function(d,i){
     var lines=d.text.split(/\n/).map(function(x){return x.trim();}).filter(Boolean);
-    var k=lines.length; while(lines.length<MIN_TOP){k++; lines.push("หัวข้อ "+k);}
-    subs.push({id:uid(),name:d.name.trim()||("วิชา "+(i+1)),topics:lines.map(function(nm){return {id:uid(),name:nm,stage:S.stages[0].id};})});
-  }
+    var name=d.name.trim();
+    if(!name&&!lines.length) return;
+    subs.push({id:uid(),name:name||("วิชา "+(subs.length+1)),topics:lines.map(function(nm){return {id:uid(),name:nm,stage:S.stages[0].id};})});
+  });
   return subs;
 }
 /* modal */
 function modalHtml(){
   var m=U.modal, b="";
-  if(m.type==="add-subj") b='<h2 id="mt">เพิ่มวิชา</h2><p>วิชาใหม่จะมี '+MIN_TOP+' หัวข้อชั่วคราว แก้ชื่อได้ทีหลัง</p><input id="modalInput" data-autofocus placeholder="ชื่อวิชา" aria-label="ชื่อวิชา"><div class="acts"><button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">เพิ่มวิชา</button></div>';
+  if(m.type==="add-subj") b='<h2 id="mt">เพิ่มวิชา</h2><p>วิชาใหม่จะยังไม่มีหัวข้อ เพิ่มหัวข้อได้หลังสร้างวิชาแล้ว</p><input id="modalInput" data-autofocus placeholder="ชื่อวิชา" aria-label="ชื่อวิชา"><div class="acts"><button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">เพิ่มวิชา</button></div>';
   if(m.type==="del-subj"){var s=S.subjects.filter(function(x){return x.id===m.id;})[0]; b='<h2 id="mt">ลบวิชา "'+esc(s.name)+'" ?</h2><p>หัวข้อทั้ง '+s.topics.length+' หัวข้อและสถานะที่ติ๊กไว้จะหายไป</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ลบวิชา</button></div>';}
   if(m.type==="del-stage"){var cur=stageById(m.id), n=m.count;
     b='<h2 id="mt">ลบขั้นตอน "'+esc(cur.name)+'" ?</h2><p>มี '+n+' หัวข้ออยู่ในขั้นตอนนี้ เลือกขั้นตอนที่จะย้ายหัวข้อเหล่านั้นไป</p><select id="modalSel" data-autofocus aria-label="ย้ายไปขั้นตอน">'+
@@ -426,8 +425,7 @@ function modalOk(){
   var m=U.modal; if(!m) return;
   if(m.type==="add-subj"){
     var nm=($("#modalInput").value||"").trim()||("วิชา "+(S.subjects.length+1));
-    var tops=[]; for(var i=1;i<=MIN_TOP;i++) tops.push({id:uid(),name:"หัวข้อ "+i,stage:S.stages[0].id});
-    var sub={id:uid(),name:nm,topics:tops}; S.subjects.push(sub); U.subj=sub.id; U.view="topics"; save(); U.modal=null; render(); toast("เพิ่มวิชา \""+nm+"\" แล้ว");
+    var sub={id:uid(),name:nm,topics:[]}; S.subjects.push(sub); U.subj=sub.id; U.view="topics"; save(); U.modal=null; render(); toast("เพิ่มวิชา \""+nm+"\" แล้ว");
   } else if(m.type==="del-subj"){
     snapshot(); S.subjects=S.subjects.filter(function(s){return s.id!==m.id;}); if(U.subj===m.id) U.subj="all"; save(); U.modal=null; render(); toast("ลบวิชาแล้ว",true);
   } else if(m.type==="del-stage"){
@@ -467,11 +465,9 @@ document.addEventListener("click",function(e){
   case "add-topic": addTopic(d.s); break;
   case "del-topic":
     var sub=findSub(d.s);
-    if(sub.topics.length<=MIN_TOP){toast("วิชานี้ต้องมีอย่างน้อย "+MIN_TOP+" หัวข้อ ลบอีกไม่ได้");break;}
     snapshot(); sub.topics=sub.topics.filter(function(t){return t.id!==d.t;}); save(); render(); toast("ลบหัวข้อแล้ว",true); break;
   case "add-subj": U.modal={type:"add-subj"}; render(); break;
   case "del-subj":
-    if(S.subjects.length<=MIN_SUBJ){toast("ต้องมีอย่างน้อย "+MIN_SUBJ+" วิชา ลบอีกไม่ได้");break;}
     U.modal={type:"del-subj",id:d.s}; render(); break;
   case "modal-cancel": closeModal(); break;
   case "modal-ok": modalOk(); break;
@@ -503,7 +499,6 @@ document.addEventListener("click",function(e){
   case "reset": U.modal={type:"reset"}; render(); break;
   case "draft-add": U.draft.push({name:"",text:""}); render(); break;
   case "draft-del":
-    if(U.draft.length<=MIN_SUBJ){toast("ต้องมีอย่างน้อย "+MIN_SUBJ+" วิชา ลบอีกไม่ได้");break;}
     U.draft.splice(+d.i,1); render(); break;
   case "finish-setup": case "skip-setup":
     S.subjects=buildSubjects(a==="finish-setup"); S.setup=true; U.view="overview"; U.draft=null; save(); render(); toast("พร้อมใช้งานแล้ว แก้ชื่อวิชาและหัวข้อได้ในแท็บ \"หัวข้อ\""); break;
@@ -514,7 +509,7 @@ document.addEventListener("input",function(e){
   if(a==="draft-name") U.draft[+t.dataset.i].name=t.value;
   if(a==="draft-text"){
     U.draft[+t.dataset.i].text=t.value; var n=lineCount(t.value), c=document.querySelector('.dcount[data-i="'+t.dataset.i+'"]');
-    if(c){c.textContent=n+"/"+MIN_TOP+" หัวข้อ"+(n<MIN_TOP?" · เติมชื่อชั่วคราวให้อัตโนมัติ":""); c.classList.toggle("ok",n>=MIN_TOP);}
+    if(c){c.textContent=n+" หัวข้อ"; c.classList.toggle("ok",n>0);}
   }
 });
 document.addEventListener("change",function(e){
