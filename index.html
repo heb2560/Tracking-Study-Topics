@@ -1,0 +1,546 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body style="margin:0">
+<title>เช็คลิสต์อ่านหนังสือ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+/* Layout: ใบรายการแบบสมุดจดตารางสอบ. หัวหน้าเป็นหมึกดำ สีสันทั้งหมดมาจากขั้นตอน Pipeline ของหัวข้อ */
+:root{
+  --bg:#F1F3F6; --surface:#FFFFFF; --ink:#111827; --muted:#5B6575; --line:#D8DDE5; --track:#E4E8EE;
+  --ink-btn:#111827; --on-btn:#FFFFFF; --hover:#EAEEF3; --danger:#B91C1C; --focus:#2563EB;
+  --k0:#64748B; --k1:#2563EB; --k2:#B45309; --k3:#15803D; --k4:#7C3AED; --k5:#BE123C; --k6:#0F766E; --k7:#C2410C;
+  --onk:#FFFFFF;
+  --f-display:"Bai Jamjuree","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Noto Sans Thai",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1116; --surface:#171B22; --ink:#E8ECF2; --muted:#9AA5B4; --line:#2A313C; --track:#262D38;
+    --ink-btn:#E8ECF2; --on-btn:#0E1116; --hover:#1F2530; --danger:#F87171; --focus:#60A5FA;
+    --k0:#94A3B8; --k1:#60A5FA; --k2:#FBBF24; --k3:#4ADE80; --k4:#A78BFA; --k5:#FB7185; --k6:#2DD4BF; --k7:#FB923C;
+    --onk:#0B1220; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1116; --surface:#171B22; --ink:#E8ECF2; --muted:#9AA5B4; --line:#2A313C; --track:#262D38;
+  --ink-btn:#E8ECF2; --on-btn:#0E1116; --hover:#1F2530; --danger:#F87171; --focus:#60A5FA;
+  --k0:#94A3B8; --k1:#60A5FA; --k2:#FBBF24; --k3:#4ADE80; --k4:#A78BFA; --k5:#FB7185; --k6:#2DD4BF; --k7:#FB923C;
+  --onk:#0B1220; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;
+  padding-block:0 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:980px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.25;text-wrap:balance}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.c0{--sc:var(--k0)}.c1{--sc:var(--k1)}.c2{--sc:var(--k2)}.c3{--sc:var(--k3)}.c4{--sc:var(--k4)}.c5{--sc:var(--k5)}.c6{--sc:var(--k6)}.c7{--sc:var(--k7)}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:18px 10px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:700;font-size:1.3rem;letter-spacing:.01em}
+.brand small{display:block;font-family:var(--f-body);font-weight:400;font-size:.78rem;color:var(--muted);letter-spacing:0}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 14px;min-height:38px;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--hover)}
+.btn.primary{background:var(--ink-btn);color:var(--on-btn);border-color:var(--ink-btn);font-weight:600}
+.btn.primary:hover{opacity:.9}
+.btn.danger{color:var(--danger)}
+.btn.sm{min-height:32px;padding:3px 10px;font-size:.85rem}
+.btn[aria-disabled="true"]{opacity:.4}
+nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:22px;overflow-x:auto}
+nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;color:var(--muted);font-weight:500;white-space:nowrap}
+nav.tabs button[aria-current="page"]{color:var(--ink);border-bottom-color:var(--ink);font-weight:600}
+
+/* stacked progress bar */
+.bar{display:flex;height:10px;border-radius:99px;overflow:hidden;background:var(--track)}
+.bar i{display:block;background:var(--sc);height:100%}
+.bar.lg{height:16px}
+.pct{font-family:var(--f-display);font-weight:700;font-variant-numeric:tabular-nums}
+
+/* overview */
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:14px}
+.hero .big{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hero .big .pct{font-size:3.4rem;line-height:1}
+.hero .big span{color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px;min-height:34px;font-size:.9rem}
+.chip:hover{background:var(--hover)}
+.chip::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--sc,var(--ink))}
+.chip b{font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--ink-btn);color:var(--on-btn);border-color:var(--ink-btn)}
+.chip[aria-pressed="true"]::before{box-shadow:0 0 0 2px var(--on-btn)}
+.sect{display:flex;justify-content:space-between;align-items:center;margin:30px 0 12px;gap:10px;flex-wrap:wrap}
+.sect h2{font-size:1.15rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.scard{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:10px;min-width:0}
+.scard:hover{border-color:var(--ink)}
+.scard .h{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.scard .nm{font-weight:600;overflow-wrap:anywhere}
+.scard .pct{font-size:1.4rem}
+.scard .m{color:var(--muted);font-size:.85rem;display:flex;flex-wrap:wrap;gap:4px 12px}
+.m span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--sc);margin-right:5px}
+
+/* topics view */
+.subtabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px}
+.subtabs button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;min-height:38px}
+.subtabs button:hover{background:var(--hover)}
+.subtabs button[aria-pressed="true"]{background:var(--ink-btn);color:var(--on-btn);border-color:var(--ink-btn);font-weight:600}
+.subtabs .add{border-style:dashed}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center}
+.filters .lb{color:var(--muted);font-size:.85rem;margin-right:2px}
+.subhead{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:12px;margin-bottom:12px}
+.subhead .r{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sname{font-family:var(--f-display);font-weight:600;font-size:1.25rem;border:1px solid transparent;background:transparent;border-radius:8px;padding:4px 8px;min-width:0;flex:1 1 180px}
+.sname:hover,.sname:focus{border-color:var(--line);background:var(--bg)}
+.group{margin-bottom:22px}
+.group>h3{font-size:1rem;display:flex;gap:10px;align-items:baseline;margin-bottom:8px}
+.group>h3 .pct{color:var(--muted);font-size:.9rem;font-weight:600}
+ul.list{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.topic{display:grid;grid-template-columns:2rem minmax(0,1fr) auto auto;gap:8px 12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+.topic:first-child{border-top:0}
+.topic .idx{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.8rem;font-family:var(--f-display)}
+.tname{border:1px solid transparent;background:transparent;border-radius:6px;padding:5px 8px;min-width:0;width:100%}
+.tname:hover,.tname:focus{border-color:var(--line);background:var(--bg)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:8px;padding:3px 11px;min-height:34px;font-size:.88rem;white-space:nowrap}
+.seg button:hover{border-color:var(--sc);color:var(--ink)}
+.seg button.on{background:var(--sc);border-color:var(--sc);color:var(--onk);font-weight:600}
+.seg button.on::before{content:"\2713\00a0"}
+.xbtn{border:0;background:transparent;color:var(--muted);border-radius:6px;min-height:34px;padding:0 10px}
+.xbtn:hover{color:var(--danger);background:var(--hover)}
+.xbtn[aria-disabled="true"]{opacity:.35}
+.addrow{display:flex;gap:8px;margin-top:12px}
+.addrow input{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 12px;min-height:40px}
+.hint{color:var(--muted);font-size:.85rem}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:28px;text-align:center;color:var(--muted)}
+
+/* pipeline view */
+.chain{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:10px 0 20px}
+.chain .node{background:var(--sc);color:var(--onk);border-radius:8px;padding:4px 12px;font-weight:600;font-size:.9rem}
+.chain .arr{color:var(--muted)}
+.stage{display:grid;grid-template-columns:auto minmax(150px,1fr) auto auto auto;gap:10px 14px;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
+.stage:first-child{border-top:0}
+.swatches{display:flex;gap:5px;flex-wrap:wrap}
+.swatches button{width:26px;height:26px;border-radius:50%;border:2px solid transparent;background:var(--sc);padding:0}
+.swatches button[aria-checked="true"]{border-color:var(--surface);box-shadow:0 0 0 2px var(--ink)}
+.stage input[type=text]{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 10px;min-height:38px;min-width:0;width:100%}
+.stage label{display:flex;gap:6px;align-items:center;font-size:.88rem;white-space:nowrap}
+.stage input[type=checkbox]{width:18px;height:18px;accent-color:var(--ink-btn)}
+.stage .ops{display:flex;gap:4px}
+.stage .cnt{color:var(--muted);font-size:.85rem;white-space:nowrap}
+
+/* data view */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px;margin-bottom:14px}
+.panel h3{font-size:1.05rem}
+.panel p{margin:0;color:var(--muted)}
+textarea.code{width:100%;min-height:130px;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78rem;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* setup */
+.setup h1{font-size:1.7rem;margin-bottom:6px}
+.setup .lead{color:var(--muted);margin:0 0 20px;max-width:62ch}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:8px;min-width:0}
+.dcard .r{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.dcard input,.dcard textarea{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 10px;min-width:0}
+.dcard textarea{min-height:150px;resize:vertical}
+.dcard .no{font-family:var(--f-display);font-weight:600;color:var(--muted);font-size:.85rem}
+.dcount{font-size:.82rem;color:var(--muted)}
+.dcount.ok{color:var(--k3)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+
+/* modal + toast */
+.scrim{position:fixed;inset:0;background:rgba(5,8,14,.55);display:grid;place-items:center;padding:16px;z-index:50}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;width:min(440px,100%);display:grid;gap:14px}
+.modal h2{font-size:1.15rem}
+.modal p{margin:0;color:var(--muted)}
+.modal input,.modal select{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 12px;min-height:40px}
+.modal .acts{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink-btn);color:var(--on-btn);
+  border-radius:10px;padding:10px 16px;display:flex;gap:14px;align-items:center;z-index:60;max-width:calc(100% - 32px);box-shadow:0 6px 24px rgba(0,0,0,.25)}
+#toast button{background:none;border:0;color:inherit;text-decoration:underline;font-weight:600;padding:0}
+
+@media (max-width:720px){
+  .topic{grid-template-columns:2rem minmax(0,1fr) auto}
+  .topic .seg{grid-column:1/-1;padding-left:2.5rem}
+  .stage{grid-template-columns:minmax(0,1fr) auto}
+  .stage .swatches,.stage input[type=text]{grid-column:1/-1}
+  .hero .big .pct{font-size:2.8rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap" id="root"></div>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+<div id="modalRoot"></div>
+
+<script>
+(function(){
+"use strict";
+var KEY="study-tracker-v1", TKEY="study-tracker-theme";
+var MIN_SUBJ=6, MIN_TOP=10;
+var COLOR_NAMES=["เทา","น้ำเงิน","เหลืองส้ม","เขียว","ม่วง","แดงกุหลาบ","เขียวหยก","ส้ม"];
+var DEFAULT_STAGES=[
+  {id:"s1",name:"ยังไม่อ่าน",color:0,done:false},
+  {id:"s2",name:"อ่านแล้ว",color:1,done:false},
+  {id:"s3",name:"รอทำควิซ",color:2,done:false},
+  {id:"s4",name:"ทำควิซแล้ว",color:3,done:true}
+];
+var mem={};
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return mem[k]===undefined?null:mem[k];}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){mem[k]=v;}}
+function $(s){return document.querySelector(s);}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function uid(){return "x"+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);}
+function clone(o){return JSON.parse(JSON.stringify(o));}
+
+function fresh(){return {v:1,setup:false,stages:clone(DEFAULT_STAGES),subjects:[]};}
+function normalize(o){
+  if(!o||typeof o!=="object") throw "ข้อมูลนี้ไม่ใช่ไฟล์ของแอปนี้";
+  var seen={};
+  var stages=(Array.isArray(o.stages)?o.stages:[]).map(function(s){
+    var id=String(s&&s.id||uid()); if(seen[id]) id=uid(); seen[id]=1;
+    return {id:id,name:String(s&&s.name||"").trim()||"ขั้นตอน",color:Math.max(0,Math.min(7,(s&&s.color)|0)),done:!!(s&&s.done)};
+  });
+  if(stages.length<2) throw "Pipeline ต้องมีอย่างน้อย 2 ขั้นตอน";
+  if(!stages.some(function(s){return s.done;})) stages[stages.length-1].done=true;
+  var subjects=(Array.isArray(o.subjects)?o.subjects:[]).map(function(s,i){
+    var tops=(Array.isArray(s&&s.topics)?s.topics:[]).map(function(t,j){
+      var st=stages.some(function(x){return x.id===(t&&t.stage);})?t.stage:stages[0].id;
+      return {id:String(t&&t.id||uid()),name:String(t&&t.name||"").trim()||("หัวข้อ "+(j+1)),stage:st};
+    });
+    return {id:String(s&&s.id||uid()),name:String(s&&s.name||"").trim()||("วิชา "+(i+1)),topics:tops};
+  });
+  if(subjects.length<MIN_SUBJ) throw "ต้องมีอย่างน้อย "+MIN_SUBJ+" วิชา (ไฟล์นี้มี "+subjects.length+")";
+  subjects.forEach(function(s){ if(s.topics.length<MIN_TOP) throw "วิชา \""+s.name+"\" มีหัวข้อไม่ถึง "+MIN_TOP+" หัวข้อ"; });
+  return {v:1,setup:true,stages:stages,subjects:subjects};
+}
+function load(){
+  var raw=lsGet(KEY);
+  if(raw){try{return normalize(JSON.parse(raw));}catch(e){}}
+  return fresh();
+}
+var S=load();
+var U={view:S.setup?"overview":"setup",subj:"all",filter:"all",modal:null,draft:null};
+var undoSnap=null;
+function save(){lsSet(KEY,JSON.stringify(S));}
+
+/* theme */
+function effTheme(){
+  var t=document.documentElement.getAttribute("data-theme");
+  if(t) return t;
+  return (window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";
+}
+(function(){var t=lsGet(TKEY); if(t==="dark"||t==="light") document.documentElement.setAttribute("data-theme",t);})();
+
+/* helpers */
+function stageById(id){return S.stages.filter(function(s){return s.id===id;})[0];}
+function stats(topics){
+  var c={}; S.stages.forEach(function(s){c[s.id]=0;});
+  topics.forEach(function(t){if(c[t.stage]!==undefined) c[t.stage]++;});
+  var done=0; S.stages.forEach(function(s){if(s.done) done+=c[s.id];});
+  return {c:c,total:topics.length,done:done,pct:topics.length?Math.round(done/topics.length*100):0};
+}
+function allTopics(){var a=[]; S.subjects.forEach(function(s){a=a.concat(s.topics);}); return a;}
+function barHtml(st,lg){
+  var lab=S.stages.map(function(s){return s.name+" "+st.c[s.id];}).join(", ");
+  var segs=S.stages.map(function(s){
+    var w=st.total?(st.c[s.id]/st.total*100):0;
+    return w>0?'<i class="c'+s.color+'" style="width:'+w+'%"></i>':"";
+  }).join("");
+  return '<div class="bar'+(lg?" lg":"")+'" role="img" aria-label="'+esc(lab)+'">'+segs+'</div>';
+}
+function toast(msg,undo){
+  var el=$("#toast");
+  el.innerHTML="<span>"+esc(msg)+"</span>"+(undo?'<button data-act="undo">เลิกทำ</button>':"");
+  el.hidden=false; if(!undo) undoSnap=null;
+  clearTimeout(toast.t); toast.t=setTimeout(function(){el.hidden=true;undoSnap=null;},5500);
+}
+function snapshot(){undoSnap=JSON.stringify(S);}
+
+/* views */
+function headerHtml(){
+  var dark=effTheme()==="dark";
+  return '<header class="top"><div class="brand">เช็คลิสต์อ่านหนังสือ<small>ติดตามทุกหัวข้อ ตั้งแต่ยังไม่อ่านจนทำควิซเสร็จ</small></div>'+
+    '<button class="btn" data-act="theme" data-fk="theme" aria-pressed="'+dark+'">'+(dark?"โหมดสว่าง":"โหมดมืด")+'</button></header>';
+}
+function navHtml(){
+  var tabs=[["overview","ภาพรวม"],["topics","หัวข้อ"],["pipeline","Pipeline"],["data","ข้อมูล"]];
+  return '<nav class="tabs" aria-label="เมนูหลัก">'+tabs.map(function(t){
+    return '<button data-act="nav" data-v="'+t[0]+'" data-fk="nav-'+t[0]+'"'+(U.view===t[0]?' aria-current="page"':"")+'>'+t[1]+'</button>';
+  }).join("")+'</nav>';
+}
+function overviewHtml(){
+  var all=stats(allTopics());
+  var h='<section class="hero"><div class="big"><span class="pct" data-testid="total-pct">'+all.pct+'%</span><span>ความคืบหน้ารวม · '+all.done+' จาก '+all.total+' หัวข้อ นับเป็นเสร็จ</span></div>'+
+    barHtml(all,true)+'<div class="legend">'+S.stages.map(function(s){
+      return '<button class="chip c'+s.color+'" data-act="go-stage" data-st="'+s.id+'">'+esc(s.name)+' <b>'+all.c[s.id]+'</b></button>';
+    }).join("")+'</div></section>';
+  h+='<div class="sect"><h2>รายวิชา ('+S.subjects.length+')</h2><span class="hint">กดที่วิชาเพื่อดูหัวข้อ</span></div><div class="grid">';
+  S.subjects.forEach(function(sub){
+    var st=stats(sub.topics);
+    h+='<button class="scard" data-act="open-subj" data-s="'+sub.id+'"><div class="h"><span class="nm">'+esc(sub.name)+'</span><span class="pct">'+st.pct+'%</span></div>'+barHtml(st)+
+      '<div class="m"><span class="c-all" style="--sc:var(--ink)">'+st.done+'/'+st.total+' เสร็จ</span>'+
+      S.stages.filter(function(s){return st.c[s.id]>0;}).map(function(s){return '<span class="c'+s.color+'">'+esc(s.name)+' '+st.c[s.id]+'</span>';}).join("")+'</div></button>';
+  });
+  return h+"</div>";
+}
+function topicRow(sub,t,i,single){
+  var seg=S.stages.map(function(s){
+    var on=t.stage===s.id;
+    return '<button class="c'+s.color+(on?" on":"")+'" role="radio" aria-checked="'+on+'" data-act="set-stage" data-s="'+sub.id+'" data-t="'+t.id+'" data-st="'+s.id+'" data-fk="st-'+t.id+'-'+s.id+'">'+esc(s.name)+'</button>';
+  }).join("");
+  return '<li class="topic" data-t="'+t.id+'"><span class="idx">'+String(i+1).padStart(2,"0")+'</span>'+
+    '<input class="tname" aria-label="ชื่อหัวข้อ" value="'+esc(t.name)+'" data-act="rename-topic" data-s="'+sub.id+'" data-t="'+t.id+'">'+
+    (single?'<button class="xbtn" data-act="del-topic" data-s="'+sub.id+'" data-t="'+t.id+'" aria-label="ลบหัวข้อ '+esc(t.name)+'" aria-disabled="'+(sub.topics.length<=MIN_TOP)+'">ลบ</button>':'<span></span>')+
+    '<div class="seg" role="radiogroup" aria-label="สถานะ '+esc(t.name)+'">'+seg+'</div></li>';
+}
+function topicsHtml(){
+  if(U.subj!=="all"&&!S.subjects.some(function(s){return s.id===U.subj;})) U.subj="all";
+  if(U.filter!=="all"&&!stageById(U.filter)) U.filter="all";
+  var single=U.subj!=="all";
+  var scope=single?S.subjects.filter(function(s){return s.id===U.subj;}):S.subjects;
+  var scopeTopics=[]; scope.forEach(function(s){scopeTopics=scopeTopics.concat(s.topics);});
+  var cs=stats(scopeTopics);
+  var h='<div class="subtabs" role="group" aria-label="เลือกวิชา"><button data-act="pick-subj" data-s="all" data-fk="ps-all" aria-pressed="'+!single+'">ทุกวิชา</button>'+
+    S.subjects.map(function(s){return '<button data-act="pick-subj" data-s="'+s.id+'" data-fk="ps-'+s.id+'" aria-pressed="'+(U.subj===s.id)+'">'+esc(s.name)+'</button>';}).join("")+
+    '<button class="add" data-act="add-subj">+ เพิ่มวิชา</button></div>';
+  h+='<div class="filters" role="group" aria-label="กรองตามสถานะ"><span class="lb">กรอง:</span>'+
+    '<button class="chip" data-act="filter" data-st="all" data-fk="f-all" aria-pressed="'+(U.filter==="all")+'">ทั้งหมด <b>'+cs.total+'</b></button>'+
+    S.stages.map(function(s){return '<button class="chip c'+s.color+'" data-act="filter" data-st="'+s.id+'" data-fk="f-'+s.id+'" aria-pressed="'+(U.filter===s.id)+'">'+esc(s.name)+' <b>'+cs.c[s.id]+'</b></button>';}).join("")+'</div>';
+  function visible(sub){
+    var out=[]; sub.topics.forEach(function(t,i){ if(U.filter==="all"||t.stage===U.filter) out.push([t,i]); }); return out;
+  }
+  if(single){
+    var sub=scope[0], st=stats(sub.topics), vis=visible(sub);
+    h+='<div class="subhead"><div class="r"><input class="sname" aria-label="ชื่อวิชา" value="'+esc(sub.name)+'" data-act="rename-subj" data-s="'+sub.id+'">'+
+      '<span class="pct" data-testid="subj-pct">'+st.pct+'%</span>'+
+      '<button class="btn sm danger" data-act="del-subj" data-s="'+sub.id+'" aria-disabled="'+(S.subjects.length<=MIN_SUBJ)+'">ลบวิชานี้</button></div>'+barHtml(st)+
+      '<span class="hint">'+sub.topics.length+' หัวข้อ (ขั้นต่ำ '+MIN_TOP+') · เสร็จแล้ว '+st.done+'</span></div>';
+    if(vis.length){
+      h+='<ul class="list">'+vis.map(function(p){return topicRow(sub,p[0],p[1],true);}).join("")+'</ul>';
+    } else h+='<div class="empty">ไม่มีหัวข้อในสถานะนี้</div>';
+    h+='<div class="addrow"><input id="newTopic" data-fk="newTopic" placeholder="ชื่อหัวข้อใหม่ แล้วกด Enter" aria-label="ชื่อหัวข้อใหม่"><button class="btn primary" data-act="add-topic" data-s="'+sub.id+'">เพิ่มหัวข้อ</button></div>';
+  } else {
+    var shown=0;
+    S.subjects.forEach(function(sub){
+      var vis=visible(sub); if(!vis.length) return; shown++;
+      var st=stats(sub.topics);
+      h+='<section class="group"><h3>'+esc(sub.name)+' <span class="pct">'+st.pct+'%</span> <button class="btn sm" data-act="open-subj" data-s="'+sub.id+'">จัดการวิชา</button></h3>'+
+        '<ul class="list">'+vis.map(function(p){return topicRow(sub,p[0],p[1],false);}).join("")+'</ul></section>';
+    });
+    if(!shown) h+='<div class="empty">ไม่มีหัวข้อในสถานะนี้</div>';
+  }
+  return h;
+}
+function pipelineHtml(){
+  var all=stats(allTopics());
+  var h='<div class="panel"><h3>เส้นทางของแต่ละหัวข้อ</h3><p>ใช้ร่วมกันทุกวิชา ปรับชื่อ สี ลำดับ และเพิ่มหรือลบขั้นตอนได้ ติ๊ก "นับเป็นเสร็จ" ที่ขั้นตอนที่ถือว่าอ่านครบแล้ว เพื่อใช้คำนวณ %</p>'+
+    '<div class="chain">'+S.stages.map(function(s,i){return (i?'<span class="arr" aria-hidden="true">→</span>':"")+'<span class="node c'+s.color+'">'+esc(s.name)+'</span>';}).join("")+'</div>';
+  h+='<ul class="list" style="border-radius:10px">'+S.stages.map(function(s,i){
+    var sw=[0,1,2,3,4,5,6,7].map(function(k){return '<button class="c'+k+'" role="radio" aria-checked="'+(s.color===k)+'" aria-label="สี'+COLOR_NAMES[k]+'" data-act="stage-color" data-st="'+s.id+'" data-k="'+k+'"></button>';}).join("");
+    return '<li class="stage c'+s.color+'"><div class="swatches" role="radiogroup" aria-label="สีของขั้นตอน">'+sw+'</div>'+
+      '<input type="text" aria-label="ชื่อขั้นตอน" value="'+esc(s.name)+'" data-act="stage-name" data-st="'+s.id+'">'+
+      '<label><input type="checkbox" data-act="stage-done" data-st="'+s.id+'"'+(s.done?" checked":"")+'> นับเป็นเสร็จ</label>'+
+      '<span class="cnt">'+all.c[s.id]+' หัวข้อ</span>'+
+      '<span class="ops"><button class="btn sm" data-act="stage-up" data-st="'+s.id+'" data-fk="up-'+s.id+'" aria-label="เลื่อนขึ้น" aria-disabled="'+(i===0)+'">▲</button>'+
+      '<button class="btn sm" data-act="stage-down" data-st="'+s.id+'" data-fk="dn-'+s.id+'" aria-label="เลื่อนลง" aria-disabled="'+(i===S.stages.length-1)+'">▼</button>'+
+      '<button class="btn sm danger" data-act="stage-del" data-st="'+s.id+'" aria-disabled="'+(S.stages.length<=2)+'">ลบ</button></span></li>';
+  }).join("")+'</ul>';
+  h+='<div class="row"><button class="btn primary" data-act="stage-add">+ เพิ่มขั้นตอน</button><span class="hint">ต้องมีอย่างน้อย 2 ขั้นตอน และอย่างน้อย 1 ขั้นที่นับเป็นเสร็จ</span></div></div>';
+  return h;
+}
+function exportJson(){return JSON.stringify({v:1,app:"study-tracker",stages:S.stages,subjects:S.subjects},null,2);}
+function dataHtml(){
+  return '<div class="panel"><h3>สำรองข้อมูล</h3><p>ข้อมูลถูกเก็บในเบราว์เซอร์นี้เท่านั้น ถ้าล้างข้อมูลเว็บหรือเปลี่ยนเครื่อง ข้อมูลจะหาย จึงควรสำรองไว้เป็นระยะ</p>'+
+    '<textarea class="code" id="exportText" readonly aria-label="ข้อมูลสำรอง">'+esc(exportJson())+'</textarea>'+
+    '<div class="row"><button class="btn primary" data-act="copy">คัดลอกข้อมูล</button><button class="btn" data-act="download">ดาวน์โหลดเป็นไฟล์ .json</button></div></div>'+
+    '<div class="panel"><h3>นำเข้าข้อมูล</h3><p>วางข้อมูลสำรองลงในช่อง หรือเลือกไฟล์ .json การนำเข้าจะแทนที่ข้อมูลปัจจุบันทั้งหมด</p>'+
+    '<textarea class="code" id="importText" aria-label="วางข้อมูลที่ต้องการนำเข้า" placeholder="{ ... }"></textarea>'+
+    '<div class="row"><input type="file" id="importFile" accept=".json,application/json" aria-label="เลือกไฟล์ข้อมูล"><button class="btn primary" data-act="import">นำเข้า</button></div></div>'+
+    '<div class="panel"><h3>เริ่มใหม่ทั้งหมด</h3><p>ลบวิชา หัวข้อ และ Pipeline ทั้งหมด แล้วกลับไปหน้าตั้งต้น</p><div class="row"><button class="btn danger" data-act="reset">ล้างข้อมูลทั้งหมด</button></div></div>';
+}
+/* setup */
+function initDraft(){U.draft=[];for(var i=0;i<MIN_SUBJ;i++) U.draft.push({name:"",text:""});}
+function lineCount(txt){return txt.split(/\n/).map(function(x){return x.trim();}).filter(Boolean).length;}
+function setupHtml(){
+  if(!U.draft) initDraft();
+  var h='<section class="setup"><h1>ตั้งต้นรายวิชา</h1><p class="lead">ใส่ชื่อวิชาอย่างน้อย '+MIN_SUBJ+' วิชา และหัวข้อย่อยอย่างน้อย '+MIN_TOP+' หัวข้อต่อวิชา พิมพ์หนึ่งบรรทัดต่อหนึ่งหัวข้อ หรือวางรายการที่คัดลอกมาได้เลย ช่องที่เว้นไว้ระบบจะเติมชื่อชั่วคราวให้ และแก้ไขได้ทีหลัง</p><div class="dgrid">';
+  U.draft.forEach(function(d,i){
+    var n=lineCount(d.text);
+    h+='<div class="dcard"><div class="r"><span class="no">วิชาที่ '+(i+1)+'</span><button class="btn sm danger" data-act="draft-del" data-i="'+i+'" aria-disabled="'+(U.draft.length<=MIN_SUBJ)+'">ลบ</button></div>'+
+      '<input data-act="draft-name" data-i="'+i+'" placeholder="วิชา '+(i+1)+'" aria-label="ชื่อวิชาที่ '+(i+1)+'" value="'+esc(d.name)+'">'+
+      '<textarea data-act="draft-text" data-i="'+i+'" aria-label="หัวข้อย่อยของวิชาที่ '+(i+1)+'" placeholder="หัวข้อ 1&#10;หัวข้อ 2&#10;...">'+esc(d.text)+'</textarea>'+
+      '<span class="dcount'+(n>=MIN_TOP?" ok":"")+'" data-i="'+i+'">'+n+'/'+MIN_TOP+' หัวข้อ'+(n<MIN_TOP?" · เติมชื่อชั่วคราวให้อัตโนมัติ":"")+'</span></div>';
+  });
+  h+='</div><div class="actions"><button class="btn" data-act="draft-add">+ เพิ่มวิชา</button><button class="btn primary" data-act="finish-setup">เริ่มใช้งาน</button><button class="btn" data-act="skip-setup">ข้าม ใช้ชื่อชั่วคราวทั้งหมด</button></div></section>';
+  return h;
+}
+function buildSubjects(useDraft){
+  var n=useDraft?U.draft.length:MIN_SUBJ, subs=[];
+  for(var i=0;i<n;i++){
+    var d=useDraft?U.draft[i]:{name:"",text:""};
+    var lines=d.text.split(/\n/).map(function(x){return x.trim();}).filter(Boolean);
+    var k=lines.length; while(lines.length<MIN_TOP){k++; lines.push("หัวข้อ "+k);}
+    subs.push({id:uid(),name:d.name.trim()||("วิชา "+(i+1)),topics:lines.map(function(nm){return {id:uid(),name:nm,stage:S.stages[0].id};})});
+  }
+  return subs;
+}
+/* modal */
+function modalHtml(){
+  var m=U.modal, b="";
+  if(m.type==="add-subj") b='<h2 id="mt">เพิ่มวิชา</h2><p>วิชาใหม่จะมี '+MIN_TOP+' หัวข้อชั่วคราว แก้ชื่อได้ทีหลัง</p><input id="modalInput" data-autofocus placeholder="ชื่อวิชา" aria-label="ชื่อวิชา"><div class="acts"><button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">เพิ่มวิชา</button></div>';
+  if(m.type==="del-subj"){var s=S.subjects.filter(function(x){return x.id===m.id;})[0]; b='<h2 id="mt">ลบวิชา "'+esc(s.name)+'" ?</h2><p>หัวข้อทั้ง '+s.topics.length+' หัวข้อและสถานะที่ติ๊กไว้จะหายไป</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ลบวิชา</button></div>';}
+  if(m.type==="del-stage"){var cur=stageById(m.id), n=m.count;
+    b='<h2 id="mt">ลบขั้นตอน "'+esc(cur.name)+'" ?</h2><p>มี '+n+' หัวข้ออยู่ในขั้นตอนนี้ เลือกขั้นตอนที่จะย้ายหัวข้อเหล่านั้นไป</p><select id="modalSel" data-autofocus aria-label="ย้ายไปขั้นตอน">'+
+      S.stages.filter(function(x){return x.id!==m.id;}).map(function(x){return '<option value="'+x.id+'">'+esc(x.name)+'</option>';}).join("")+'</select><div class="acts"><button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">ย้ายแล้วลบ</button></div>';}
+  if(m.type==="reset") b='<h2 id="mt">ล้างข้อมูลทั้งหมด ?</h2><p>ลบทุกวิชา ทุกหัวข้อ และ Pipeline ที่แก้ไว้ ไม่สามารถเลิกทำได้ ควรสำรองข้อมูลก่อน</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ล้างข้อมูล</button></div>';
+  return '<div class="scrim" data-act="scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">'+b+'</div></div>';
+}
+/* render */
+function render(){
+  var ae=document.activeElement, fk=ae&&ae.dataset?ae.dataset.fk:null, sy=window.scrollY;
+  var h=headerHtml();
+  if(!S.setup){h+=setupHtml();}
+  else{
+    h+=navHtml();
+    h+=U.view==="overview"?overviewHtml():U.view==="topics"?topicsHtml():U.view==="pipeline"?pipelineHtml():dataHtml();
+  }
+  $("#root").innerHTML=h;
+  $("#modalRoot").innerHTML=U.modal?modalHtml():"";
+  if(fk){var el=document.querySelector('[data-fk="'+fk+'"]'); if(el) el.focus({preventScroll:true});}
+  if(U.modal){var f=document.querySelector("#modalRoot [data-autofocus]"); if(f) f.focus();}
+  window.scrollTo(0,sy);
+}
+/* actions */
+function findSub(id){return S.subjects.filter(function(s){return s.id===id;})[0];}
+function addTopic(sid){
+  var inp=$("#newTopic"), v=inp?inp.value.trim():"";
+  if(!v){toast("พิมพ์ชื่อหัวข้อก่อน");return;}
+  findSub(sid).topics.push({id:uid(),name:v,stage:S.stages[0].id}); save(); render();
+  var n=$("#newTopic"); if(n) n.focus();
+}
+function closeModal(){U.modal=null; render();}
+function modalOk(){
+  var m=U.modal; if(!m) return;
+  if(m.type==="add-subj"){
+    var nm=($("#modalInput").value||"").trim()||("วิชา "+(S.subjects.length+1));
+    var tops=[]; for(var i=1;i<=MIN_TOP;i++) tops.push({id:uid(),name:"หัวข้อ "+i,stage:S.stages[0].id});
+    var sub={id:uid(),name:nm,topics:tops}; S.subjects.push(sub); U.subj=sub.id; U.view="topics"; save(); U.modal=null; render(); toast("เพิ่มวิชา \""+nm+"\" แล้ว");
+  } else if(m.type==="del-subj"){
+    snapshot(); S.subjects=S.subjects.filter(function(s){return s.id!==m.id;}); if(U.subj===m.id) U.subj="all"; save(); U.modal=null; render(); toast("ลบวิชาแล้ว",true);
+  } else if(m.type==="del-stage"){
+    var target=$("#modalSel").value; snapshot();
+    S.subjects.forEach(function(s){s.topics.forEach(function(t){if(t.stage===m.id) t.stage=target;});});
+    removeStage(m.id); U.modal=null; render(); toast("ลบขั้นตอนและย้ายหัวข้อแล้ว",true);
+  } else if(m.type==="reset"){
+    S=fresh(); U={view:"setup",subj:"all",filter:"all",modal:null,draft:null}; try{localStorage.removeItem(KEY);}catch(e){delete mem[KEY];} render(); toast("ล้างข้อมูลแล้ว");
+  }
+}
+function removeStage(id){
+  var wasDone=stageById(id).done;
+  S.stages=S.stages.filter(function(s){return s.id!==id;});
+  if(!S.stages.some(function(s){return s.done;})) S.stages[S.stages.length-1].done=true;
+  if(U.filter===id) U.filter="all";
+  save();
+}
+function importNow(){
+  var txt=($("#importText").value||"").trim();
+  if(!txt){toast("วางข้อมูลหรือเลือกไฟล์ก่อน");return;}
+  try{
+    var n=normalize(JSON.parse(txt)); snapshot(); S=n; U.subj="all"; U.filter="all"; save(); U.view="overview"; render(); toast("นำเข้าข้อมูลแล้ว",true);
+  }catch(e){toast("นำเข้าไม่ได้: "+(typeof e==="string"?e:"รูปแบบข้อมูลไม่ถูกต้อง"));}
+}
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-act]"); if(!b) return;
+  var a=b.dataset.act, d=b.dataset;
+  if(a==="scrim"){ if(e.target===b) closeModal(); return; }
+  switch(a){
+  case "theme": var nt=effTheme()==="dark"?"light":"dark"; document.documentElement.setAttribute("data-theme",nt); lsSet(TKEY,nt); render(); break;
+  case "nav": U.view=d.v; render(); break;
+  case "go-stage": U.view="topics"; U.subj="all"; U.filter=d.st; render(); break;
+  case "open-subj": U.view="topics"; U.subj=d.s; U.filter="all"; render(); window.scrollTo(0,0); break;
+  case "pick-subj": U.subj=d.s; render(); break;
+  case "filter": U.filter=d.st; render(); break;
+  case "set-stage": findSub(d.s).topics.forEach(function(t){if(t.id===d.t) t.stage=d.st;}); save(); render(); break;
+  case "add-topic": addTopic(d.s); break;
+  case "del-topic":
+    var sub=findSub(d.s);
+    if(sub.topics.length<=MIN_TOP){toast("วิชานี้ต้องมีอย่างน้อย "+MIN_TOP+" หัวข้อ ลบอีกไม่ได้");break;}
+    snapshot(); sub.topics=sub.topics.filter(function(t){return t.id!==d.t;}); save(); render(); toast("ลบหัวข้อแล้ว",true); break;
+  case "add-subj": U.modal={type:"add-subj"}; render(); break;
+  case "del-subj":
+    if(S.subjects.length<=MIN_SUBJ){toast("ต้องมีอย่างน้อย "+MIN_SUBJ+" วิชา ลบอีกไม่ได้");break;}
+    U.modal={type:"del-subj",id:d.s}; render(); break;
+  case "modal-cancel": closeModal(); break;
+  case "modal-ok": modalOk(); break;
+  case "undo": if(undoSnap){S=JSON.parse(undoSnap); undoSnap=null; save(); $("#toast").hidden=true; render();} break;
+  case "stage-color": S.stages.forEach(function(s){if(s.id===d.st) s.color=+d.k;}); save(); render(); break;
+  case "stage-add":
+    var used={}; S.stages.forEach(function(s){used[s.color]=1;}); var col=S.stages.length%8; for(var k=0;k<8;k++){if(!used[k]){col=k;break;}}
+    S.stages.push({id:uid(),name:"ขั้นตอนใหม่",color:col,done:false}); save(); render(); break;
+  case "stage-up": case "stage-down":
+    var i=S.stages.map(function(s){return s.id;}).indexOf(d.st), j=a==="stage-up"?i-1:i+1;
+    if(j<0||j>=S.stages.length) break;
+    var tmp=S.stages[i]; S.stages[i]=S.stages[j]; S.stages[j]=tmp; save(); render(); break;
+  case "stage-del":
+    if(S.stages.length<=2){toast("ต้องมีอย่างน้อย 2 ขั้นตอน ลบอีกไม่ได้");break;}
+    var cnt=allTopics().filter(function(t){return t.stage===d.st;}).length;
+    if(cnt>0){U.modal={type:"del-stage",id:d.st,count:cnt}; render();}
+    else {snapshot(); removeStage(d.st); render(); toast("ลบขั้นตอนแล้ว",true);} break;
+  case "copy":
+    var ta=$("#exportText"), txt=ta.value;
+    var fallback=function(){ta.focus(); ta.select(); toast("เลือกข้อมูลไว้แล้ว กด Ctrl+C (หรือกดค้างแล้วเลือกคัดลอก)");};
+    try{ navigator.clipboard.writeText(txt).then(function(){toast("คัดลอกข้อมูลแล้ว");},fallback);}catch(err){fallback();} break;
+  case "download":
+    try{
+      var blob=new Blob([exportJson()],{type:"application/json"}), url=URL.createObjectURL(blob), l=document.createElement("a");
+      l.href=url; l.download="study-tracker-backup.json"; document.body.appendChild(l); l.click(); l.remove(); setTimeout(function(){URL.revokeObjectURL(url);},1000);
+      toast("เริ่มดาวน์โหลดแล้ว ถ้าไม่ขึ้นให้ใช้ปุ่มคัดลอกข้อมูลแทน");
+    }catch(err){toast("ดาวน์โหลดไม่ได้ ใช้ปุ่มคัดลอกข้อมูลแทน");} break;
+  case "import": importNow(); break;
+  case "reset": U.modal={type:"reset"}; render(); break;
+  case "draft-add": U.draft.push({name:"",text:""}); render(); break;
+  case "draft-del":
+    if(U.draft.length<=MIN_SUBJ){toast("ต้องมีอย่างน้อย "+MIN_SUBJ+" วิชา ลบอีกไม่ได้");break;}
+    U.draft.splice(+d.i,1); render(); break;
+  case "finish-setup": case "skip-setup":
+    S.subjects=buildSubjects(a==="finish-setup"); S.setup=true; U.view="overview"; U.draft=null; save(); render(); toast("พร้อมใช้งานแล้ว แก้ชื่อวิชาและหัวข้อได้ในแท็บ \"หัวข้อ\""); break;
+  }
+});
+document.addEventListener("input",function(e){
+  var t=e.target, a=t.dataset&&t.dataset.act;
+  if(a==="draft-name") U.draft[+t.dataset.i].name=t.value;
+  if(a==="draft-text"){
+    U.draft[+t.dataset.i].text=t.value; var n=lineCount(t.value), c=document.querySelector('.dcount[data-i="'+t.dataset.i+'"]');
+    if(c){c.textContent=n+"/"+MIN_TOP+" หัวข้อ"+(n<MIN_TOP?" · เติมชื่อชั่วคราวให้อัตโนมัติ":""); c.classList.toggle("ok",n>=MIN_TOP);}
+  }
+});
+document.addEventListener("change",function(e){
+  var t=e.target, a=t.dataset&&t.dataset.act, d=t.dataset||{};
+  if(t.id==="importFile"&&t.files&&t.files[0]){
+    var fr=new FileReader(); fr.onload=function(){$("#importText").value=String(fr.result); toast("อ่านไฟล์แล้ว กด \"นำเข้า\" เพื่อยืนยัน");}; fr.readAsText(t.files[0]); return;
+  }
+  if(a==="rename-topic"){var v=t.value.trim(); if(!v){render();return;} findSub(d.s).topics.forEach(function(x){if(x.id===d.t) x.name=v;}); save(); render();}
+  if(a==="rename-subj"){var v2=t.value.trim(); if(!v2){render();return;} findSub(d.s).name=v2; save(); render();}
+  if(a==="stage-name"){var v3=t.value.trim(); if(!v3){render();return;} stageById(d.st).name=v3; save(); render();}
+  if(a==="stage-done"){
+    var s=stageById(d.st);
+    if(!t.checked && S.stages.filter(function(x){return x.done;}).length<=1){toast("ต้องมีอย่างน้อย 1 ขั้นตอนที่นับเป็นเสร็จ"); render(); return;}
+    s.done=t.checked; save(); render();
+  }
+});
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"&&U.modal){closeModal();return;}
+  if(e.key!=="Enter") return;
+  var t=e.target;
+  if(t.id==="newTopic"){e.preventDefault(); var b=document.querySelector('[data-act="add-topic"]'); if(b) addTopic(b.dataset.s);}
+  else if(t.id==="modalInput"){e.preventDefault(); modalOk();}
+  else if(t.classList&&(t.classList.contains("tname")||t.classList.contains("sname"))){t.blur();}
+});
+render();
+})();
+</script>
+
+</body></html>
