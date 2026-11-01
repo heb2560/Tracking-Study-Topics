@@ -210,9 +210,60 @@ textarea.code{width:100%;min-height:130px;border:1px solid var(--line);backgroun
 .dlrow .path small{color:var(--muted);display:block}
 .notice{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;color:var(--muted);font-size:.88rem;margin:0 0 16px}
 .setup code{background:var(--track);border-radius:4px;padding:0 5px}
+
+/* Pomodoro */
+.tm{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:20px;align-items:start}
+.tmcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:16px;justify-items:center}
+.ringw{position:relative;width:min(260px,100%);aspect-ratio:1}
+.ringw svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ringw .trk{fill:none;stroke:var(--track);stroke-width:12}
+.ringw .arc{fill:none;stroke-width:12;stroke-linecap:round}
+.ringw.read .arc{stroke:var(--k1)}
+.ringw.brk .arc{stroke:var(--k3)}
+.ringw.wait .arc{stroke:var(--warn)}
+.ringc{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:2px}
+.ringc .ph{color:var(--muted);font-weight:600}
+.ringc .clock{font-family:var(--f-display);font-weight:700;font-size:3rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.ringc .sub{color:var(--muted);font-size:.88rem;font-variant-numeric:tabular-nums}
+.dots{display:flex;gap:6px;min-height:12px}
+.dots i{width:11px;height:11px;border-radius:50%;border:2px solid var(--muted)}
+.dots i.on{background:var(--k1);border-color:var(--k1)}
+.btn.big{min-height:46px;padding:8px 22px;font-size:1.05rem}
+.tmctl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.tmside{display:grid;gap:14px;min-width:0}
+.field{display:grid;gap:4px;min-width:0}
+.field label{font-size:.85rem;color:var(--muted)}
+.field select,.sg input[type=number]{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 10px;min-height:40px;width:100%;min-width:0}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.sg .field.chk{align-content:end}
+.sg .chk label{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:.92rem;min-height:40px}
+.sg .chk input{width:18px;height:18px;accent-color:var(--ink-btn)}
+.sstats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sstat{border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.sstat b{display:block;font-family:var(--f-display);font-size:1.4rem}
+.sstat span{color:var(--muted);font-size:.85rem}
+.tscroll{overflow-x:auto}
+table.tmt{width:100%;border-collapse:collapse;font-size:.92rem}
+.tmt th,.tmt td{padding:7px 8px;text-align:left;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.tmt thead th{color:var(--muted);font-weight:500;font-size:.82rem;border-top:0}
+.tmt tbody th{font-weight:500}
+.tmtag{color:var(--muted);font-size:.8rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.banner{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--warn);color:var(--on-warn);border-radius:12px;padding:12px 16px;margin-top:10px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 6px 20px rgba(0,0,0,.22)}
+.banner.ok{background:var(--k3);color:var(--onk)}
+.banner .bt{display:grid;gap:2px;min-width:0}
+.banner .bs{font-size:.88rem;opacity:.95}
+.banner .btn.primary{background:var(--surface);color:var(--ink);border-color:var(--surface)}
+.mini{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:35;background:var(--ink-btn);color:var(--on-btn);border-radius:99px;padding:6px 8px 6px 16px;display:flex;align-items:center;gap:10px;max-width:calc(100% - 24px);box-shadow:0 6px 24px rgba(0,0,0,.28)}
+.mini .t{font-family:var(--f-display);font-weight:700;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.mini .ph{font-size:.82rem;opacity:.85;white-space:nowrap}
+.mini .who{font-size:.82rem;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
+.mini button{border:0;border-radius:99px;min-height:34px;padding:0 14px;background:var(--on-btn);color:var(--ink-btn);font-weight:600;white-space:nowrap}
+body.hasmini #toast{bottom:calc(78px + env(safe-area-inset-bottom,0px))}
+@media (max-width:760px){.tm{grid-template-columns:minmax(0,1fr)}.mini .who{display:none}}
 </style>
 
-<div class="wrap" id="root"></div>
+<div class="wrap"><div id="bannerRoot"></div><div id="root"></div></div>
+<div id="miniRoot"></div>
 <div id="toast" role="status" aria-live="polite" hidden></div>
 <div id="modalRoot"></div>
 
@@ -250,7 +301,7 @@ function validDate(s){
 }
 
 /* ---------- state ---------- */
-function fresh(){return {v:2,setup:false,settings:{warnDays:3},stages:clone(DEFAULT_STAGES),subjects:[]};}
+function fresh(){return {v:2,setup:false,settings:{warnDays:3,pomo:{read:25,short:5,long:15,every:4,longOn:true}},stages:clone(DEFAULT_STAGES),subjects:[],sessions:[]};}
 function normalize(o){
   if(!o||typeof o!=="object") throw "ข้อมูลนี้ไม่ใช่ไฟล์ของแอปนี้";
   if(o.v!==2) throw "ไฟล์นี้เป็นรูปแบบเวอร์ชันเก่า (วิชา → หัวข้อ) นำเข้าในเวอร์ชันนี้ไม่ได้";
@@ -262,6 +313,9 @@ function normalize(o){
   if(stages.length<2) throw "Pipeline ต้องมีอย่างน้อย 2 ขั้นตอน";
   if(!stages.some(function(s){return s.done;})) stages[stages.length-1].done=true;
   var wd=parseInt(o.settings&&o.settings.warnDays,10); if(isNaN(wd)) wd=3; wd=Math.max(0,Math.min(60,wd));
+  function cl(v,d,a,b){var n=parseInt(v,10); if(isNaN(n)) n=d; return Math.max(a,Math.min(b,n));}
+  var pm=(o.settings&&o.settings.pomo)||{};
+  var pomoS={read:cl(pm.read,25,1,180),short:cl(pm.short,5,1,60),long:cl(pm.long,15,1,60),every:cl(pm.every,4,2,12),longOn:pm.longOn!==false};
   var subjects=(Array.isArray(o.subjects)?o.subjects:[]).map(function(s,i){
     var topics=(Array.isArray(s&&s.topics)?s.topics:[]).map(function(t,j){
       var items=(Array.isArray(t&&t.items)?t.items:[]).map(function(it,k){
@@ -272,7 +326,16 @@ function normalize(o){
     });
     return {id:String(s&&s.id||uid()),name:String(s&&s.name||"").trim()||("วิชา "+(i+1)),topics:topics};
   });
-  return {v:2,setup:true,settings:{warnDays:wd},stages:stages,subjects:subjects};
+  var sessions=[];
+  (Array.isArray(o.sessions)?o.sessions:[]).forEach(function(x){
+    if(!x||!validDate(x.date)) return;
+    var sec=Math.round(+x.sec); if(!(sec>=1&&sec<=86400)) return;
+    var sb=subjects.filter(function(q){return q.id===x.s;})[0];
+    var tpp=sb&&sb.topics.filter(function(q){return q.id===x.tp;})[0];
+    var itt=tpp&&tpp.items.filter(function(q){return q.id===x.it;})[0];
+    sessions.push({id:String(x.id||uid()),date:x.date,sec:sec,s:sb?sb.id:null,tp:tpp?tpp.id:null,it:itt?itt.id:null});
+  });
+  return {v:2,setup:true,settings:{warnDays:wd,pomo:pomoS},stages:stages,subjects:subjects,sessions:sessions};
 }
 function load(){
   var raw=lsGet(KEY);
@@ -330,6 +393,20 @@ function snapshot(){undoSnap=JSON.stringify(S);}
 function findSub(id){return S.subjects.filter(function(s){return s.id===id;})[0];}
 function findTopic(sid,tid){var s=findSub(sid); return s&&s.topics.filter(function(t){return t.id===tid;})[0];}
 function findItem(sid,tid,iid){var t=findTopic(sid,tid); return t&&t.items.filter(function(i){return i.id===iid;})[0];}
+function fmtDur(sec){
+  sec=Math.round(sec); if(sec<=0) return "0 น.";
+  if(sec<60) return sec+" วิ";
+  var m=Math.floor(sec/60), h=Math.floor(m/60);
+  return h?(h+" ชม. "+(m%60)+" น."):(m+" น.");
+}
+function sumSec(f){var n=0; (S.sessions||[]).forEach(function(x){if(f(x)) n+=x.sec;}); return n;}
+function secOfItem(id){return sumSec(function(x){return x.it===id;});}
+function secOfTopic(id){return sumSec(function(x){return x.tp===id;});}
+function secOfSubject(id){return sumSec(function(x){return x.s===id;});}
+function secToday(){var t=todayStr(); return sumSec(function(x){return x.date===t;});}
+function secAll(){return sumSec(function(){return true;});}
+function tmTag(sec){return sec?'<span class="tmtag" title="เวลาอ่านสะสม">⏱ '+fmtDur(sec)+'</span>':"";}
+function dateOf(ms){var d=new Date(ms); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
 function filtered(){return U.filter!=="all"||U.near;}
 function visItems(tp){
   var out=[]; tp.items.forEach(function(it,i){
@@ -337,6 +414,136 @@ function visItems(tp){
   }); return out;
 }
 
+/* ---------- pomodoro ---------- */
+var TKEY2="study-tracker-timer-v1", RING=2*Math.PI*96;
+function freshT(){return {phase:"read",status:"idle",durMs:0,accMs:0,segStart:null,endedAt:null,round:0,next:null,lastSeen:0,lastCredit:0,lastLabel:"",note:"",sel:{s:null,tp:null,it:null}};}
+function loadT(){try{var o=JSON.parse(lsGet(TKEY2)); if(o&&typeof o==="object"&&o.sel) return Object.assign(freshT(),o);}catch(e){} return freshT();}
+var T=loadT();
+function saveT(){lsSet(TKEY2,JSON.stringify(T));}
+function pomo(){return S.settings.pomo;}
+function phaseMs(ph){var p=pomo(); return (ph==="read"?p.read:ph==="short"?p.short:p.long)*60000;}
+function elapsedMs(now){return T.accMs+(T.segStart?Math.max(0,now-T.segStart):0);}
+function remainMs(now){
+  if(T.status==="idle") return phaseMs("read");
+  if(T.status==="waiting") return 0;
+  return Math.max(0,T.durMs-elapsedMs(now));
+}
+function fmtClock(ms){var s=Math.ceil(ms/1000), m=Math.floor(s/60); return pad(m)+":"+pad(s%60);}
+function ringOffset(now){
+  if(T.status==="idle"||T.status==="waiting"||!T.durMs) return 0;
+  return RING*Math.min(1,elapsedMs(now)/T.durMs);
+}
+function sanitizeSel(){
+  var sl=T.sel;
+  if(sl.s&&!findSub(sl.s)){T.sel=sl={s:null,tp:null,it:null};}
+  if(sl.it&&!findItem(sl.s,sl.tp,sl.it)){sl.it=null; sl.tp=null;}
+  return sl;
+}
+function selLabel(){
+  var sl=sanitizeSel(); if(!sl.s) return "ไม่ระบุวิชา";
+  var t=findSub(sl.s).name; if(sl.it) t+=" › "+findItem(sl.s,sl.tp,sl.it).name; return t;
+}
+function startPhase(ph){
+  var now=Date.now();
+  T.phase=ph; T.durMs=phaseMs(ph); T.accMs=0; T.segStart=now; T.status="running"; T.endedAt=null; T.next=null; T.note=""; T.lastSeen=now; saveT();
+}
+function finishPhase(endedAt,creditMs){
+  var wasRead=T.phase==="read";
+  T.status="waiting"; T.endedAt=endedAt; T.segStart=null; T.accMs=0;
+  if(wasRead){
+    var sec=Math.round(creditMs/1000); T.lastCredit=sec; T.lastLabel=selLabel();
+    if(sec>=1){var sl=sanitizeSel(); S.sessions.push({id:uid(),date:dateOf(endedAt),sec:sec,s:sl.s,tp:sl.tp,it:sl.it}); save();}
+    T.round++; var p=pomo(); T.next=(p.longOn&&T.round>=p.every)?"long":"short";
+  }
+  saveT();
+  var ae=document.activeElement;
+  if(ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) renderOverlays(); else render();
+}
+function resetTimer(){T=Object.assign(freshT(),{sel:T.sel}); saveT(); render();}
+function tick(){
+  var now=Date.now();
+  if(T.status==="running"){
+    if(elapsedMs(now)>=T.durMs){finishPhase(T.segStart+(T.durMs-T.accMs),T.durMs); return;}
+    if(now-T.lastSeen>=1000){T.lastSeen=now; saveT();}
+  }
+  updateTm(now);
+}
+function updateTm(now){
+  var tn=document.querySelectorAll('[data-tm="time"]'), i;
+  var txt=fmtClock(remainMs(now));
+  for(i=0;i<tn.length;i++) if(tn[i].textContent!==txt) tn[i].textContent=txt;
+  var ov=document.querySelectorAll('[data-tm="over"]'), ot=(T.status==="waiting"&&T.endedAt)?"เกินมา "+fmtClock(Math.max(0,now-T.endedAt)):"";
+  for(i=0;i<ov.length;i++) if(ov[i].textContent!==ot) ov[i].textContent=ot;
+  var rg=document.querySelectorAll('[data-tm="ring"]');
+  for(i=0;i<rg.length;i++) rg[i].setAttribute("stroke-dashoffset",ringOffset(now).toFixed(2));
+}
+function phaseName(ph){return ph==="read"?"ช่วงอ่าน":ph==="short"?"พักสั้น":"พักยาว";}
+function timerHtml(){
+  var now=Date.now(), p=pomo(), st=T.status, ph=T.phase, sl=sanitizeSel();
+  var cls=st==="waiting"?"wait":ph==="read"?"read":"brk";
+  var sub;
+  if(st==="waiting") sub='<span data-tm="over"></span>';
+  else if(ph==="read") sub=p.longOn?("รอบที่ "+Math.min(T.round+1,p.every)+" จาก "+p.every):("รอบที่ "+(T.round+1));
+  else sub=ph==="short"?("พักหลังรอบที่ "+T.round):("พักยาวหลังครบ "+p.every+" รอบ");
+  var dots=""; if(p.longOn){var filled=ph==="long"?p.every:Math.min(T.round,p.every); for(var i=0;i<p.every;i++) dots+='<i class="'+(i<filled?"on":"")+'"></i>';}
+  var ctl;
+  if(st==="idle") ctl='<button class="btn primary big" data-act="tm-start" data-fk="tm-main">เริ่มอ่าน</button>';
+  else if(st==="waiting") ctl=(ph==="read"?'<button class="btn primary big" data-act="tm-next" data-fk="tm-main">เข้าช่วงพัก ('+Math.round(phaseMs(T.next||"short")/60000)+' นาที)</button>':'<button class="btn primary big" data-act="tm-next" data-fk="tm-main">เริ่มช่วงอ่านรอบถัดไป</button>')+'<button class="btn" data-act="tm-reset">รีเซ็ต</button>';
+  else ctl='<button class="btn primary big" data-act="tm-toggle" data-fk="tm-main">'+(st==="running"?"หยุดชั่วคราว":"ต่อ")+'</button>'+(ph==="read"?'<button class="btn" data-act="tm-end">จบรอบนี้เลย</button>':'<button class="btn" data-act="tm-skip">ข้ามช่วงพัก</button>')+'<button class="btn" data-act="tm-reset">รีเซ็ต</button>';
+  var subOpts='<option value="">ไม่ระบุวิชา</option>'+S.subjects.map(function(s){return '<option value="'+s.id+'"'+(sl.s===s.id?" selected":"")+'>'+esc(s.name)+'</option>';}).join("");
+  var itOpts='<option value="">ไม่ระบุหัวข้อย่อย 2</option>';
+  if(sl.s) findSub(sl.s).topics.forEach(function(t){
+    if(!t.items.length) return;
+    itOpts+='<optgroup label="'+esc(t.name)+'">'+t.items.map(function(it){return '<option value="'+it.id+'"'+(sl.it===it.id?" selected":"")+'>'+esc(it.name)+'</option>';}).join("")+'</optgroup>';
+  });
+  var today=todayStr();
+  var rows=S.subjects.map(function(s){
+    var a=secOfSubject(s.id), d=sumSec(function(x){return x.s===s.id&&x.date===today;});
+    return '<tr><th scope="row">'+esc(s.name)+'</th><td>'+(d?fmtDur(d):"–")+'</td><td>'+(a?fmtDur(a):"–")+'</td></tr>';
+  }).join("");
+  var un=sumSec(function(x){return !x.s;}), und=sumSec(function(x){return !x.s&&x.date===today;});
+  if(un) rows+='<tr><th scope="row">ไม่ระบุวิชา</th><td>'+(und?fmtDur(und):"–")+'</td><td>'+fmtDur(un)+'</td></tr>';
+  var h='<div class="tm"><section class="tmcard" aria-label="ตัวจับเวลา"><div class="ringw '+cls+'"><svg viewBox="0 0 220 220" aria-hidden="true"><circle class="trk" cx="110" cy="110" r="96"/><circle class="arc" data-tm="ring" cx="110" cy="110" r="96" stroke-dasharray="'+RING.toFixed(2)+'" stroke-dashoffset="'+ringOffset(now).toFixed(2)+'"/></svg>'+
+    '<div class="ringc"><span class="ph" data-testid="tm-phase">'+(st==="waiting"?(ph==="read"?"หมดเวลาช่วงอ่าน":"หมดเวลาพัก"):phaseName(ph))+'</span><span class="clock" data-tm="time" data-testid="tm-time">'+fmtClock(remainMs(now))+'</span><span class="sub" data-testid="tm-sub">'+sub+'</span></div></div>'+
+    (dots?'<div class="dots" role="img" aria-label="รอบที่อ่านครบแล้ว '+Math.min(T.round,p.every)+' จาก '+p.every+'">'+dots+'</div>':'')+
+    '<div class="tmctl">'+ctl+'</div></section>'+
+    '<div class="tmside"><section class="panel"><h3>อ่านวิชาอะไร</h3><p>เลือกหรือไม่เลือกก็ได้ เวลาที่อ่านครบแต่ละช่วงจะถูกบันทึกให้สิ่งที่เลือกไว้ตอนจบช่วงนั้น</p>'+
+    '<div class="sg"><div class="field"><label for="tmSubj">วิชา</label><select id="tmSubj" data-act="tm-subj">'+subOpts+'</select></div>'+
+    '<div class="field"><label for="tmItem">หัวข้อย่อย 2</label><select id="tmItem" data-act="tm-item"'+(sl.s?"":" disabled")+'>'+itOpts+'</select></div></div></section>'+
+    '<section class="panel"><h3>เวลาอ่านสะสม</h3><div class="sstats"><div class="sstat"><b data-testid="tm-today">'+fmtDur(secToday())+'</b><span>วันนี้</span></div><div class="sstat"><b data-testid="tm-all">'+fmtDur(secAll())+'</b><span>ทั้งหมด</span></div></div>'+
+    (rows?'<div class="tscroll"><table class="tmt"><thead><tr><th>วิชา</th><th>วันนี้</th><th>ทั้งหมด</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<p class="hint">ยังไม่มีวิชา</p>')+'</section>'+
+    '<section class="panel"><h3>ตั้งค่าเวลา</h3><p>เปลี่ยนค่าระหว่างที่เวลาเดินอยู่จะมีผลกับช่วงถัดไป</p><div class="sg">'+
+    '<div class="field"><label for="pmRead">ช่วงอ่าน (นาที)</label><input type="number" id="pmRead" data-act="pomo-set" data-k="read" min="1" max="180" value="'+p.read+'"></div>'+
+    '<div class="field"><label for="pmShort">พักสั้น (นาที)</label><input type="number" id="pmShort" data-act="pomo-set" data-k="short" min="1" max="60" value="'+p.short+'"></div>'+
+    '<div class="field"><label for="pmLong">พักยาว (นาที)</label><input type="number" id="pmLong" data-act="pomo-set" data-k="long" min="1" max="60" value="'+p.long+'"></div>'+
+    '<div class="field"><label for="pmEvery">พักยาวทุกกี่รอบ</label><input type="number" id="pmEvery" data-act="pomo-set" data-k="every" min="2" max="12" value="'+p.every+'"></div>'+
+    '<div class="field chk"><label><input type="checkbox" id="pmLongOn" data-act="pomo-set" data-k="longOn"'+(p.longOn?" checked":"")+'> เปิดพักยาว</label></div></div></section></div></div>';
+  return h;
+}
+function renderOverlays(){
+  var st=T.status, b="", m="", now=Date.now();
+  if(st==="waiting"){
+    var read=T.phase==="read";
+    b='<div class="banner'+(read?"":" ok")+'" role="alert"><div class="bt"><b>'+(read?"⏰ หมดเวลาช่วงอ่านแล้ว":"☕ หมดเวลาพักแล้ว")+'</b><span class="bs">'+
+      (read?"บันทึกเวลาอ่าน "+fmtDur(T.lastCredit)+" ให้ "+esc(T.lastLabel):"พร้อมเริ่มรอบถัดไปเมื่อคุณพร้อม")+(T.note?" · "+esc(T.note):"")+' · <span data-tm="over"></span></span></div>'+
+      '<button class="btn primary" data-act="tm-next" data-fk="bn-main">'+(read?"เข้าช่วงพัก ("+Math.round(phaseMs(T.next||"short")/60000)+" นาที)":"เริ่มช่วงอ่านรอบถัดไป")+'</button></div>';
+  }
+  var showMini=(st==="running"||st==="paused")&&U.view!=="timer";
+  if(showMini) m='<div class="mini" role="group" aria-label="ตัวจับเวลา"><span class="ph">'+phaseName(T.phase)+(st==="paused"?" (หยุด)":"")+'</span><span class="t" data-tm="time">'+fmtClock(remainMs(now))+'</span><span class="who">'+esc(selLabel())+'</span>'+
+    '<button data-act="tm-toggle" data-fk="mini-toggle">'+(st==="running"?"หยุด":"ต่อ")+'</button><button data-act="nav" data-v="timer">เปิด</button></div>';
+  $("#bannerRoot").innerHTML=b; $("#miniRoot").innerHTML=m;
+  document.body.classList.toggle("hasmini",showMini);
+  updateTm(now);
+}
+(function restoreTimer(){
+  if(T.status!=="running") return;
+  var now=Date.now(); if(elapsedMs(now)<T.durMs) return;
+  var endedAt=T.segStart+(T.durMs-T.accMs);
+  var seen=Math.min(T.durMs,Math.max(0,T.accMs+(T.lastSeen-T.segStart)));
+  if(endedAt-T.lastSeen<=2500) seen=T.durMs;
+  if(T.phase==="read"&&seen<T.durMs) T.note="หน้าเว็บถูกปิดก่อนหมดเวลา จึงบันทึกเท่าที่เปิดอยู่";
+  finishPhase(endedAt,T.phase==="read"?seen:0);
+})();
 /* ---------- views ---------- */
 function headerHtml(){
   var dark=effTheme()==="dark";
@@ -344,7 +551,7 @@ function headerHtml(){
     '<button class="btn" data-act="theme" data-fk="theme" aria-pressed="'+dark+'">'+(dark?"โหมดสว่าง":"โหมดมืด")+'</button></header>';
 }
 function navHtml(){
-  var tabs=[["overview","ภาพรวม"],["topics","หัวข้อ"],["pipeline","Pipeline"],["data","ข้อมูล"]];
+  var tabs=[["overview","ภาพรวม"],["topics","หัวข้อ"],["timer","จับเวลา"],["pipeline","Pipeline"],["data","ข้อมูล"]];
   return '<nav class="tabs" aria-label="เมนูหลัก">'+tabs.map(function(t){
     return '<button data-act="nav" data-v="'+t[0]+'" data-fk="nav-'+t[0]+'"'+(U.view===t[0]?' aria-current="page"':"")+'>'+t[1]+'</button>';
   }).join("")+'</nav>';
@@ -360,7 +567,7 @@ function dueList(){
 function overviewHtml(){
   var all=stats(allItems());
   var h='<section class="hero"><div class="big"><span class="pct" data-testid="total-pct">'+all.pct+'%</span><span>ความคืบหน้ารวม · '+all.done+' จาก '+all.total+' หัวข้อย่อย 2 นับเป็นเสร็จ</span></div>'+
-    barHtml(all,true)+'<div class="legend">'+S.stages.map(function(s){
+    barHtml(all,true)+'<div class="hint">⏱ เวลาอ่านวันนี้ '+fmtDur(secToday())+' · ทั้งหมด '+fmtDur(secAll())+'</div><div class="legend">'+S.stages.map(function(s){
       return '<button class="chip c'+s.color+'" data-act="go-stage" data-st="'+s.id+'">'+esc(s.name)+' <b>'+all.c[s.id]+'</b></button>';
     }).join("")+'</div></section>';
   var dl=dueList();
@@ -380,7 +587,7 @@ function overviewHtml(){
   S.subjects.forEach(function(sub){
     var items=itemsOf(sub), st=stats(items), dc=dueCounts(items);
     h+='<button class="scard" data-act="open-subj" data-s="'+sub.id+'"><div class="h"><span class="nm">'+esc(sub.name)+'</span><span class="pct">'+st.pct+'%</span></div>'+barHtml(st)+
-      '<div class="m"><span style="--sc:var(--ink)">'+st.done+'/'+st.total+' เสร็จ · '+sub.topics.length+' หัวข้อย่อย</span>'+
+      '<div class="m"><span style="--sc:var(--ink)">'+st.done+'/'+st.total+' เสร็จ · '+sub.topics.length+' หัวข้อย่อย'+(secOfSubject(sub.id)?' · ⏱ '+fmtDur(secOfSubject(sub.id)):'')+'</span>'+
       S.stages.filter(function(s){return st.c[s.id]>0;}).map(function(s){return '<span class="c'+s.color+'">'+esc(s.name)+' '+st.c[s.id]+'</span>';}).join("")+'</div>'+
       (dc.near||dc.over?'<div class="badges">'+dueBadges(dc)+'</div>':"")+'</button>';
   });
@@ -395,7 +602,7 @@ function itemRow(sub,tp,it,i,single){
   var ids='data-s="'+sub.id+'" data-tp="'+tp.id+'" data-it="'+it.id+'"';
   return '<li class="topic'+(info?" "+info.kind:"")+'" data-it="'+it.id+'"><span class="idx">'+pad(i+1)+'</span>'+
     '<input class="tname" aria-label="ชื่อหัวข้อย่อย 2" value="'+esc(it.name)+'" data-act="rename-item" '+ids+'>'+
-    '<div class="due">'+(info?'<span class="badge '+info.kind+'">'+info.label+'</span>':"")+
+    '<div class="due">'+tmTag(secOfItem(it.id))+(info?'<span class="badge '+info.kind+'">'+info.label+'</span>':"")+
     '<input type="date" class="dinput" aria-label="Deadline ของ '+esc(it.name)+'" value="'+(it.due||"")+'" data-act="set-due" '+ids+'></div>'+
     (single?'<button class="xbtn" data-act="del-item" '+ids+' aria-label="ลบหัวข้อย่อย 2 '+esc(it.name)+'">ลบ</button>':'<span></span>')+
     '<div class="seg" role="radiogroup" aria-label="สถานะ '+esc(it.name)+'">'+seg+'</div></li>';
@@ -407,7 +614,7 @@ function topicCard(sub,tp){
   var h='<section class="tcard" data-tp="'+tp.id+'"><div class="thead">'+
     '<button class="fold" data-act="fold" data-tp="'+tp.id+'" data-fk="fold-'+tp.id+'" aria-expanded="'+(!folded)+'" aria-label="พับหรือขยาย '+esc(tp.name)+'">'+(folded?"▸":"▾")+'</button>'+
     '<input class="tn" aria-label="ชื่อหัวข้อย่อย" value="'+esc(tp.name)+'" data-act="rename-topic" data-s="'+sub.id+'" data-tp="'+tp.id+'">'+
-    '<span class="tsum" data-testid="tsum">เสร็จ '+st.done+'/'+st.total+'</span>'+dueBadges(dc)+
+    '<span class="tsum" data-testid="tsum">เสร็จ '+st.done+'/'+st.total+(secOfTopic(tp.id)?' · ⏱ '+fmtDur(secOfTopic(tp.id)):'')+'</span>'+dueBadges(dc)+
     '<button class="xbtn" data-act="del-topic" data-s="'+sub.id+'" data-tp="'+tp.id+'" aria-label="ลบหัวข้อย่อย '+esc(tp.name)+'">ลบ</button></div>';
   if(st.total) h+='<div class="tbarw">'+barHtml(st)+'</div>';
   if(!folded){
@@ -437,7 +644,7 @@ function topicsHtml(){
     h+='<div class="subhead"><div class="r"><input class="sname" aria-label="ชื่อวิชา" value="'+esc(sub.name)+'" data-act="rename-subj" data-s="'+sub.id+'">'+
       '<span class="pct" data-testid="subj-pct">'+st.pct+'%</span>'+
       '<button class="btn sm danger" data-act="del-subj" data-s="'+sub.id+'">ลบวิชานี้</button></div>'+barHtml(st)+
-      '<div class="r"><span class="hint">'+sub.topics.length+' หัวข้อย่อย · '+st.total+' หัวข้อย่อย 2 · เสร็จแล้ว '+st.done+'</span>'+dueBadges(sdc)+'</div></div>';
+      '<div class="r"><span class="hint">'+sub.topics.length+' หัวข้อย่อย · '+st.total+' หัวข้อย่อย 2 · เสร็จแล้ว '+st.done+(secOfSubject(sub.id)?' · ⏱ อ่านแล้ว '+fmtDur(secOfSubject(sub.id)):'')+'</span>'+dueBadges(sdc)+'</div></div>';
     var cards=sub.topics.map(function(tp){return topicCard(sub,tp);}).join("");
     if(cards) h+=cards;
     else h+='<div class="empty">'+(filtered()?'ไม่มีหัวข้อย่อย 2 ที่ตรงกับตัวกรอง':'วิชานี้ยังไม่มีหัวข้อย่อย เพิ่มหัวข้อย่อยแรกด้านล่าง')+'</div>';
@@ -475,7 +682,7 @@ function pipelineHtml(){
   h+='<div class="row"><button class="btn primary" data-act="stage-add">+ เพิ่มขั้นตอน</button><span class="hint">ต้องมีอย่างน้อย 2 ขั้นตอน และอย่างน้อย 1 ขั้นที่นับเป็นเสร็จ</span></div></div>';
   return h;
 }
-function exportJson(){return JSON.stringify({v:2,app:"study-tracker",settings:S.settings,stages:S.stages,subjects:S.subjects},null,2);}
+function exportJson(){return JSON.stringify({v:2,app:"study-tracker",settings:S.settings,stages:S.stages,subjects:S.subjects,sessions:S.sessions},null,2);}
 function dataHtml(){
   return '<div class="panel"><h3>สำรองข้อมูล</h3><p>ข้อมูลถูกเก็บในเบราว์เซอร์นี้เท่านั้น ถ้าล้างข้อมูลเว็บหรือเปลี่ยนเครื่อง ข้อมูลจะหาย จึงควรสำรองไว้เป็นระยะ</p>'+
     '<textarea class="code" id="exportText" readonly aria-label="ข้อมูลสำรอง">'+esc(exportJson())+'</textarea>'+
@@ -530,11 +737,12 @@ function buildSubjects(){
 function modalHtml(){
   var m=U.modal, b="";
   if(m.type==="add-subj") b='<h2 id="mt">เพิ่มวิชา</h2><p>วิชาใหม่จะยังไม่มีหัวข้อ เพิ่มหัวข้อย่อยได้หลังสร้างวิชาแล้ว</p><input id="modalInput" data-autofocus placeholder="ชื่อวิชา" aria-label="ชื่อวิชา"><div class="acts"><button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">เพิ่มวิชา</button></div>';
-  if(m.type==="del-subj"){var s=findSub(m.id), n=itemsOf(s).length; b='<h2 id="mt">ลบวิชา "'+esc(s.name)+'" ?</h2><p>หัวข้อย่อย '+s.topics.length+' หัวข้อ และหัวข้อย่อย 2 อีก '+n+' หัวข้อ รวมสถานะและ Deadline จะหายไป</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ลบวิชา</button></div>';}
-  if(m.type==="del-topic"){var tp=findTopic(m.s,m.tp); b='<h2 id="mt">ลบหัวข้อย่อย "'+esc(tp.name)+'" ?</h2><p>หัวข้อย่อย 2 ที่อยู่ข้างใน '+tp.items.length+' หัวข้อ รวมสถานะและ Deadline จะหายไปด้วย</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ลบหัวข้อย่อย</button></div>';}
+  if(m.type==="del-subj"){var s=findSub(m.id), n=itemsOf(s).length; b='<h2 id="mt">ลบวิชา "'+esc(s.name)+'" ?</h2><p>หัวข้อย่อย '+s.topics.length+' หัวข้อ และหัวข้อย่อย 2 อีก '+n+' หัวข้อ รวมสถานะ Deadline และเวลาอ่านที่บันทึกไว้จะหายไป</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ลบวิชา</button></div>';}
+  if(m.type==="del-topic"){var tp=findTopic(m.s,m.tp); b='<h2 id="mt">ลบหัวข้อย่อย "'+esc(tp.name)+'" ?</h2><p>หัวข้อย่อย 2 ที่อยู่ข้างใน '+tp.items.length+' หัวข้อ รวมสถานะ Deadline และเวลาอ่านที่บันทึกไว้จะหายไปด้วย</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ลบหัวข้อย่อย</button></div>';}
   if(m.type==="del-stage"){var cur=stageById(m.id);
     b='<h2 id="mt">ลบขั้นตอน "'+esc(cur.name)+'" ?</h2><p>มี '+m.count+' หัวข้อย่อย 2 อยู่ในขั้นตอนนี้ เลือกขั้นตอนที่จะย้ายไป</p><select id="modalSel" data-autofocus aria-label="ย้ายไปขั้นตอน">'+
       S.stages.filter(function(x){return x.id!==m.id;}).map(function(x){return '<option value="'+x.id+'">'+esc(x.name)+'</option>';}).join("")+'</select><div class="acts"><button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">ย้ายแล้วลบ</button></div>';}
+  if(m.type==="tm-reset") b='<h2 id="mt">รีเซ็ตตัวจับเวลา ?</h2><p>เวลาที่เดินไปแล้ว '+fmtDur(m.sec)+' ในช่วงอ่านนี้จะไม่ถูกบันทึก ถ้าอยากเก็บเวลาไว้ ให้ใช้ปุ่ม "จบรอบนี้เลย" แทน</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">รีเซ็ตโดยไม่บันทึก</button></div>';
   if(m.type==="reset") b='<h2 id="mt">ล้างข้อมูลทั้งหมด ?</h2><p>ลบทุกวิชา ทุกหัวข้อ และ Pipeline ที่แก้ไว้ ไม่สามารถเลิกทำได้ ควรสำรองข้อมูลก่อน</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ล้างข้อมูล</button></div>';
   return '<div class="scrim" data-act="scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">'+b+'</div></div>';
 }
@@ -545,10 +753,11 @@ function render(){
   if(!S.setup) h+=setupHtml();
   else{
     h+=navHtml();
-    h+=U.view==="overview"?overviewHtml():U.view==="topics"?topicsHtml():U.view==="pipeline"?pipelineHtml():dataHtml();
+    h+=U.view==="overview"?overviewHtml():U.view==="topics"?topicsHtml():U.view==="timer"?timerHtml():U.view==="pipeline"?pipelineHtml():dataHtml();
   }
   $("#root").innerHTML=h;
   $("#modalRoot").innerHTML=U.modal?modalHtml():"";
+  renderOverlays();
   if(fk){var el=document.querySelector('[data-fk="'+fk+'"]'); if(el) el.focus({preventScroll:true});}
   if(U.modal){var f=document.querySelector("#modalRoot [data-autofocus]"); if(f) f.focus();}
   window.scrollTo(0,sy);
@@ -573,15 +782,17 @@ function modalOk(){
     var nm=($("#modalInput").value||"").trim()||("วิชา "+(S.subjects.length+1));
     var sub={id:uid(),name:nm,topics:[]}; S.subjects.push(sub); U.subj=sub.id; U.view="topics"; save(); U.modal=null; render(); toast("เพิ่มวิชา \""+nm+"\" แล้ว");
   } else if(m.type==="del-subj"){
-    snapshot(); S.subjects=S.subjects.filter(function(s){return s.id!==m.id;}); if(U.subj===m.id) U.subj="all"; save(); U.modal=null; render(); toast("ลบวิชาแล้ว",true);
+    snapshot(); S.subjects=S.subjects.filter(function(s){return s.id!==m.id;}); S.sessions=S.sessions.filter(function(x){return x.s!==m.id;}); if(U.subj===m.id) U.subj="all"; save(); U.modal=null; render(); toast("ลบวิชาแล้ว",true);
   } else if(m.type==="del-topic"){
-    snapshot(); var sub2=findSub(m.s); sub2.topics=sub2.topics.filter(function(t){return t.id!==m.tp;}); save(); U.modal=null; render(); toast("ลบหัวข้อย่อยแล้ว",true);
+    snapshot(); var sub2=findSub(m.s); sub2.topics=sub2.topics.filter(function(t){return t.id!==m.tp;}); S.sessions=S.sessions.filter(function(x){return x.tp!==m.tp;}); save(); U.modal=null; render(); toast("ลบหัวข้อย่อยแล้ว",true);
   } else if(m.type==="del-stage"){
     var target=$("#modalSel").value; snapshot();
     S.subjects.forEach(function(s){s.topics.forEach(function(t){t.items.forEach(function(it){if(it.stage===m.id) it.stage=target;});});});
     removeStage(m.id); U.modal=null; render(); toast("ลบขั้นตอนและย้ายหัวข้อย่อย 2 แล้ว",true);
+  } else if(m.type==="tm-reset"){
+    resetTimer(); U.modal=null; render();
   } else if(m.type==="reset"){
-    S=fresh(); U={view:"setup",subj:"all",filter:"all",near:false,fold:{},modal:null,draft:null}; try{localStorage.removeItem(KEY);}catch(e){delete mem[KEY];} render(); toast("ล้างข้อมูลแล้ว");
+    S=fresh(); T=freshT(); saveT(); U={view:"setup",subj:"all",filter:"all",near:false,fold:{},modal:null,draft:null}; try{localStorage.removeItem(KEY);}catch(e){delete mem[KEY];} render(); toast("ล้างข้อมูลแล้ว");
   }
 }
 function removeStage(id){
@@ -615,11 +826,11 @@ document.addEventListener("click",function(e){
   case "add-topic": addTopic(d.s); break;
   case "add-item": addItem(d.s,d.tp); break;
   case "del-item":
-    snapshot(); var tp=findTopic(d.s,d.tp); tp.items=tp.items.filter(function(x){return x.id!==d.it;}); save(); render(); toast("ลบหัวข้อย่อย 2 แล้ว",true); break;
+    snapshot(); var tp=findTopic(d.s,d.tp); tp.items=tp.items.filter(function(x){return x.id!==d.it;}); S.sessions=S.sessions.filter(function(x){return x.it!==d.it;}); save(); render(); toast("ลบหัวข้อย่อย 2 แล้ว",true); break;
   case "del-topic":
     var tp2=findTopic(d.s,d.tp);
     if(tp2.items.length){U.modal={type:"del-topic",s:d.s,tp:d.tp}; render();}
-    else {snapshot(); var sb=findSub(d.s); sb.topics=sb.topics.filter(function(t){return t.id!==d.tp;}); save(); render(); toast("ลบหัวข้อย่อยแล้ว",true);} break;
+    else {snapshot(); var sb=findSub(d.s); sb.topics=sb.topics.filter(function(t){return t.id!==d.tp;}); S.sessions=S.sessions.filter(function(x){return x.tp!==d.tp;}); save(); render(); toast("ลบหัวข้อย่อยแล้ว",true);} break;
   case "add-subj": U.modal={type:"add-subj"}; render(); break;
   case "del-subj": U.modal={type:"del-subj",id:d.s}; render(); break;
   case "modal-cancel": closeModal(); break;
@@ -650,6 +861,22 @@ document.addEventListener("click",function(e){
     }catch(err){toast("ดาวน์โหลดไม่ได้ ใช้ปุ่มคัดลอกข้อมูลแทน");} break;
   case "import": importNow(); break;
   case "reset": U.modal={type:"reset"}; render(); break;
+  case "tm-start": startPhase("read"); render(); break;
+  case "tm-toggle":
+    var tn=Date.now();
+    if(T.status==="running"){T.accMs=elapsedMs(tn); T.segStart=null; T.status="paused";}
+    else if(T.status==="paused"){T.segStart=tn; T.status="running"; T.lastSeen=tn;}
+    saveT(); render(); break;
+  case "tm-end": finishPhase(Date.now(),elapsedMs(Date.now())); break;
+  case "tm-skip": finishPhase(Date.now(),0); break;
+  case "tm-next":
+    if(T.phase==="read"){var nx=T.next||"short"; if(nx==="long") T.round=0; startPhase(nx);} else startPhase("read");
+    render(); break;
+  case "tm-reset":
+    var tr=Date.now();
+    if(T.phase==="read"&&(T.status==="running"||T.status==="paused")&&elapsedMs(tr)>=1000){U.modal={type:"tm-reset",sec:Math.floor(elapsedMs(tr)/1000)}; render();}
+    else resetTimer();
+    break;
   case "draft-add": U.draft.push({name:"",text:""}); render(); break;
   case "draft-del": U.draft.splice(+d.i,1); render(); break;
   case "finish-setup": S.subjects=buildSubjects(); S.setup=true; U.view="overview"; U.draft=null; save(); render(); toast("พร้อมใช้งานแล้ว เพิ่มและแก้ไขได้ในแท็บ \"หัวข้อ\""); break;
@@ -673,6 +900,17 @@ document.addEventListener("change",function(e){
   if(a==="rename-item"){var v1=t.value.trim(); if(!v1){render();return;} findItem(d.s,d.tp,d.it).name=v1; save(); render();}
   if(a==="rename-subj"){var v2=t.value.trim(); if(!v2){render();return;} findSub(d.s).name=v2; save(); render();}
   if(a==="set-due"){var it=findItem(d.s,d.tp,d.it); it.due=validDate(t.value)?t.value:null; save(); render();}
+  if(a==="pomo-set"){
+    var pk=d.k, pp=S.settings.pomo;
+    if(pk==="longOn") pp.longOn=t.checked;
+    else {var lim={read:[1,180],short:[1,60],long:[1,60],every:[2,12]}[pk], pn=parseInt(t.value,10); if(isNaN(pn)) pn=pp[pk]; pp[pk]=Math.max(lim[0],Math.min(lim[1],pn));}
+    save(); render(); return;
+  }
+  if(a==="tm-subj"){T.sel={s:t.value||null,tp:null,it:null}; saveT(); render(); return;}
+  if(a==="tm-item"){
+    var fnd=null; if(t.value&&T.sel.s) findSub(T.sel.s).topics.forEach(function(tp){tp.items.forEach(function(i){if(i.id===t.value) fnd=[tp.id,i.id];});});
+    T.sel.tp=fnd?fnd[0]:null; T.sel.it=fnd?fnd[1]:null; saveT(); render(); return;
+  }
   if(a==="warn-days"){var n=parseInt(t.value,10); if(isNaN(n)) n=S.settings.warnDays; S.settings.warnDays=Math.max(0,Math.min(60,n)); save(); render();}
   if(a==="stage-name"){var v3=t.value.trim(); if(!v3){render();return;} stageById(d.st).name=v3; save(); render();}
   if(a==="stage-done"){
@@ -691,6 +929,8 @@ document.addEventListener("keydown",function(e){
   else if(t.classList&&(t.classList.contains("tname")||t.classList.contains("sname")||t.classList.contains("tn"))){t.blur();}
 });
 render();
+setInterval(tick,250);
+document.addEventListener("visibilitychange",function(){if(!document.hidden) tick();});
 })();
 </script>
 
