@@ -83,8 +83,11 @@ nav.tabs button[aria-current="page"]{color:var(--ink);border-bottom-color:var(--
 .m span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--sc);margin-right:5px}
 
 /* topics view */
-.subtabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px}
-.subtabs button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;min-height:38px}
+.subbar{display:flex;gap:8px;align-items:flex-start;margin-bottom:12px}
+.subtabs{display:flex;flex-wrap:wrap;gap:6px;flex:1 1 auto;min-width:0;position:relative}
+.subtabs button{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;min-height:38px;max-width:min(240px,100%);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.addsubj{flex:none;border:1px dashed var(--ink);background:var(--surface);border-radius:8px;padding:6px 14px;min-height:38px;font-weight:600;white-space:nowrap}
+.addsubj:hover{background:var(--hover)}
 .subtabs button:hover{background:var(--hover)}
 .subtabs button[aria-pressed="true"]{background:var(--ink-btn);color:var(--on-btn);border-color:var(--ink-btn);font-weight:600}
 .subtabs .add{border-style:dashed}
@@ -260,6 +263,12 @@ table.tmt{width:100%;border-collapse:collapse;font-size:.92rem}
 .mini button{border:0;border-radius:99px;min-height:34px;padding:0 14px;background:var(--on-btn);color:var(--ink-btn);font-weight:600;white-space:nowrap}
 body.hasmini #toast{bottom:calc(78px + env(safe-area-inset-bottom,0px))}
 @media (max-width:760px){.tm{grid-template-columns:minmax(0,1fr)}.mini .who{display:none}}
+@media (max-width:720px){
+  .subbar{flex-direction:column;align-items:stretch}
+  .addsubj{order:-1;width:100%}
+  .subtabs{max-height:136px;overflow-y:auto;padding:2px;margin:-2px}
+  .subtabs button{max-width:calc(50% - 3px)}
+}
 </style>
 
 <div class="wrap"><div id="bannerRoot"></div><div id="root"></div></div>
@@ -631,9 +640,9 @@ function topicsHtml(){
   var scope=single?[findSub(U.subj)]:S.subjects;
   var scopeItems=[]; scope.forEach(function(s){scopeItems=scopeItems.concat(itemsOf(s));});
   var cs=stats(scopeItems), dc=dueCounts(scopeItems);
-  var h='<div class="subtabs" role="group" aria-label="เลือกวิชา"><button data-act="pick-subj" data-s="all" data-fk="ps-all" aria-pressed="'+!single+'">ทุกวิชา</button>'+
-    S.subjects.map(function(s){return '<button data-act="pick-subj" data-s="'+s.id+'" data-fk="ps-'+s.id+'" aria-pressed="'+(U.subj===s.id)+'">'+esc(s.name)+'</button>';}).join("")+
-    '<button class="add" data-act="add-subj">+ เพิ่มวิชา</button></div>';
+  var h='<div class="subbar"><div class="subtabs" role="group" aria-label="เลือกวิชา"><button data-act="pick-subj" data-s="all" data-fk="ps-all" aria-pressed="'+!single+'">ทุกวิชา</button>'+
+    S.subjects.map(function(s){return '<button data-act="pick-subj" data-s="'+s.id+'" data-fk="ps-'+s.id+'" aria-pressed="'+(U.subj===s.id)+'" title="'+esc(s.name)+'">'+esc(s.name)+'</button>';}).join("")+
+    '</div><button class="addsubj" data-act="add-subj" data-fk="add-subj">+ เพิ่มวิชา</button></div>';
   h+='<div class="filters" role="group" aria-label="กรอง"><span class="lb">กรอง:</span>'+
     '<button class="chip" data-act="filter" data-st="all" data-fk="f-all" aria-pressed="'+(U.filter==="all")+'">ทั้งหมด <b>'+cs.total+'</b></button>'+
     S.stages.map(function(s){return '<button class="chip c'+s.color+'" data-act="filter" data-st="'+s.id+'" data-fk="f-'+s.id+'" aria-pressed="'+(U.filter===s.id)+'">'+esc(s.name)+' <b>'+cs.c[s.id]+'</b></button>';}).join("")+
@@ -758,6 +767,8 @@ function render(){
   $("#root").innerHTML=h;
   $("#modalRoot").innerHTML=U.modal?modalHtml():"";
   renderOverlays();
+  var pb=document.querySelector('.subtabs button[aria-pressed="true"]'), sc=pb&&pb.parentNode;
+  if(sc&&sc.scrollHeight>sc.clientHeight) sc.scrollTop=Math.max(0,pb.offsetTop-6);
   if(fk){var el=document.querySelector('[data-fk="'+fk+'"]'); if(el) el.focus({preventScroll:true});}
   if(U.modal){var f=document.querySelector("#modalRoot [data-autofocus]"); if(f) f.focus();}
   window.scrollTo(0,sy);
