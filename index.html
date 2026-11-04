@@ -1,5 +1,4 @@
-<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body style="margin:0">
-<title>เช็คลิสต์อ่านหนังสือ</title>
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body style="margin:0"><title>เช็คลิสต์อ่านหนังสือ</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
@@ -269,6 +268,32 @@ body.hasmini #toast{bottom:calc(78px + env(safe-area-inset-bottom,0px))}
   .subtabs{max-height:136px;overflow-y:auto;padding:2px;margin:-2px}
   .subtabs button{max-width:calc(50% - 3px)}
 }
+
+.lg .lghd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.lgf{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+.lgf .filters{margin:0}
+.lgf .field{min-width:160px;flex:1 1 160px;max-width:260px}
+.lgf select{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 10px;min-height:40px;width:100%}
+.lgsum{margin:0}.lgsum b{color:var(--ink)}
+.lgchart{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;align-items:end;height:130px;padding:4px 0}
+.lgchart .col{display:grid;grid-template-rows:16px 1fr 18px;height:100%;text-align:center;font-size:.76rem;color:var(--muted);min-width:0}
+.lgchart .bx{display:flex;height:auto;background:none;border-radius:0;overflow:visible;align-items:flex-end;justify-content:center;border-bottom:1px solid var(--line)}
+.lgchart .bx i{display:block;width:70%;max-width:34px;background:var(--k1);border-radius:4px 4px 0 0;min-height:0}
+.lgchart .today .bx i{background:var(--ink-btn)}
+.lgchart .today .w{color:var(--ink);font-weight:700}
+.lgchart .v{font-variant-numeric:tabular-nums}
+.lgday .dh{display:flex;justify-content:space-between;gap:10px;padding:8px 0 4px;border-bottom:1px solid var(--line);font-size:.92rem}
+.lgday .dh span{color:var(--muted);font-variant-numeric:tabular-nums}
+ul.lgrows{list-style:none;margin:0;padding:0}
+.lgrow{display:grid;grid-template-columns:minmax(120px,max-content) 70px minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.lgrow .tm2,.lgrow .mn{font-variant-numeric:tabular-nums;white-space:nowrap}
+.lgrow .who2{min-width:0;overflow-wrap:anywhere}
+.lgrow .ac{display:flex;gap:6px}
+.lgrow .badge{display:inline-block;font-size:.72rem;border:1px solid var(--line);border-radius:99px;padding:0 8px;color:var(--muted)}
+.sg2{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.modal .field label{font-size:.85rem;color:var(--muted)}
+.modal p.err{color:var(--over);font-weight:600}
+@media (max-width:620px){.lgrow{grid-template-columns:1fr auto;grid-template-areas:"tm mn" "who who" "ac ac"}.lgrow .tm2{grid-area:tm}.lgrow .mn{grid-area:mn;text-align:right}.lgrow .who2{grid-area:who}.lgrow .ac{grid-area:ac}}
 </style>
 
 <div class="wrap"><div id="bannerRoot"></div><div id="root"></div></div>
@@ -337,12 +362,14 @@ function normalize(o){
   });
   var sessions=[];
   (Array.isArray(o.sessions)?o.sessions:[]).forEach(function(x){
-    if(!x||!validDate(x.date)) return;
+    if(!x) return;
+    var stt=+x.start, enn=+x.end, hasT=x.start!=null&&x.end!=null&&isFinite(stt)&&stt>0&&isFinite(enn)&&enn>=stt;
+    var dt=hasT?dateOf(stt):x.date; if(!validDate(dt)) return;
     var sec=Math.round(+x.sec); if(!(sec>=1&&sec<=86400)) return;
     var sb=subjects.filter(function(q){return q.id===x.s;})[0];
     var tpp=sb&&sb.topics.filter(function(q){return q.id===x.tp;})[0];
     var itt=tpp&&tpp.items.filter(function(q){return q.id===x.it;})[0];
-    sessions.push({id:String(x.id||uid()),date:x.date,sec:sec,s:sb?sb.id:null,tp:tpp?tpp.id:null,it:itt?itt.id:null});
+    sessions.push({id:String(x.id||uid()),date:dt,sec:sec,s:sb?sb.id:null,tp:tpp?tpp.id:null,it:itt?itt.id:null,start:hasT?stt:null,end:hasT?enn:null,manual:x.manual===true,paused:x.paused===true});
   });
   return {v:2,setup:true,settings:{warnDays:wd,pomo:pomoS},stages:stages,subjects:subjects,sessions:sessions};
 }
@@ -425,7 +452,7 @@ function visItems(tp){
 
 /* ---------- pomodoro ---------- */
 var TKEY2="study-tracker-timer-v1", RING=2*Math.PI*96;
-function freshT(){return {phase:"read",status:"idle",durMs:0,accMs:0,segStart:null,endedAt:null,round:0,next:null,lastSeen:0,lastCredit:0,lastLabel:"",note:"",sel:{s:null,tp:null,it:null}};}
+function freshT(){return {phase:"read",status:"idle",durMs:0,accMs:0,segStart:null,endedAt:null,round:0,next:null,lastSeen:0,lastCredit:0,lastLabel:"",note:"",phaseStart:null,paused:false,sel:{s:null,tp:null,it:null}};}
 function loadT(){try{var o=JSON.parse(lsGet(TKEY2)); if(o&&typeof o==="object"&&o.sel) return Object.assign(freshT(),o);}catch(e){} return freshT();}
 var T=loadT();
 function saveT(){lsSet(TKEY2,JSON.stringify(T));}
@@ -454,14 +481,18 @@ function selLabel(){
 }
 function startPhase(ph){
   var now=Date.now();
-  T.phase=ph; T.durMs=phaseMs(ph); T.accMs=0; T.segStart=now; T.status="running"; T.endedAt=null; T.next=null; T.note=""; T.lastSeen=now; saveT();
+  T.phase=ph; T.durMs=phaseMs(ph); T.accMs=0; T.segStart=now; T.phaseStart=now; T.paused=false; T.status="running"; T.endedAt=null; T.next=null; T.note=""; T.lastSeen=now; saveT();
 }
-function finishPhase(endedAt,creditMs){
+function finishPhase(endedAt,creditMs,endTs){
   var wasRead=T.phase==="read";
   T.status="waiting"; T.endedAt=endedAt; T.segStart=null; T.accMs=0;
   if(wasRead){
     var sec=Math.round(creditMs/1000); T.lastCredit=sec; T.lastLabel=selLabel();
-    if(sec>=1){var sl=sanitizeSel(); S.sessions.push({id:uid(),date:dateOf(endedAt),sec:sec,s:sl.s,tp:sl.tp,it:sl.it}); save();}
+    if(sec>=1){
+      var sl=sanitizeSel(), st0=(typeof T.phaseStart==="number"&&T.phaseStart>0)?T.phaseStart:null, en0=endTs||endedAt;
+      if(st0&&en0<st0) en0=st0;
+      S.sessions.push({id:uid(),date:st0?dateOf(st0):dateOf(endedAt),sec:sec,s:sl.s,tp:sl.tp,it:sl.it,start:st0,end:st0?en0:null,manual:false,paused:!!T.paused}); save();
+    }
     T.round++; var p=pomo(); T.next=(p.longOn&&T.round>=p.every)?"long":"short";
   }
   saveT();
@@ -527,7 +558,114 @@ function timerHtml(){
     '<div class="field"><label for="pmLong">พักยาว (นาที)</label><input type="number" id="pmLong" data-act="pomo-set" data-k="long" min="1" max="60" value="'+p.long+'"></div>'+
     '<div class="field"><label for="pmEvery">พักยาวทุกกี่รอบ</label><input type="number" id="pmEvery" data-act="pomo-set" data-k="every" min="2" max="12" value="'+p.every+'"></div>'+
     '<div class="field chk"><label><input type="checkbox" id="pmLongOn" data-act="pomo-set" data-k="longOn"'+(p.longOn?" checked":"")+'> เปิดพักยาว</label></div></div></section></div></div>';
+  h+=logHtml();
   return h;
+}
+/* ---------- reading log ---------- */
+var THDAY=["อา","จ","อ","พ","พฤ","ศ","ส"];
+function dayShift(n){var d=new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate()+n); return dateOf(d.getTime());}
+function dateParts(ds){var a=ds.split("-"); return new Date(+a[0],+a[1]-1,+a[2]);}
+function dayLabel(ds){
+  if(ds===todayStr()) return "วันนี้"; if(ds===dayShift(-1)) return "เมื่อวาน";
+  var d=dateParts(ds); return "วัน"+["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"][d.getDay()]+" "+d.getDate()+"/"+(d.getMonth()+1)+"/"+(d.getFullYear()+543);
+}
+function hm(ms){var d=new Date(ms); return pad(d.getHours())+":"+pad(d.getMinutes());}
+function timeText(x){
+  if(!x.start) return "ไม่ทราบเวลาเริ่ม";
+  return hm(x.start)+"–"+hm(x.end)+(dateOf(x.end)!==dateOf(x.start)?" (+1)":"");
+}
+function logWho(x){
+  var sb=x.s&&findSub(x.s); if(!sb) return "ไม่ระบุวิชา";
+  var t=sb.name, it=x.it&&findItem(x.s,x.tp,x.it); if(it) t+=" › "+it.name; return t;
+}
+function LG(){return U.log||(U.log={range:"7",subj:"all"});}
+function logPass(x,f,useRange){
+  if(f.subj==="none"){ if(x.s) return false; } else if(f.subj!=="all"&&x.s!==f.subj) return false;
+  if(useRange){
+    if(f.range==="1"&&x.date!==todayStr()) return false;
+    if(f.range==="7"&&x.date<dayShift(-6)) return false;
+    if(f.range==="30"&&x.date<dayShift(-29)) return false;
+  }
+  return true;
+}
+function logSort(a,b){
+  if(a.date!==b.date) return a.date<b.date?1:-1;
+  var as=a.start||0, bs=b.start||0; if(!a.start&&b.start) return 1; if(a.start&&!b.start) return -1;
+  return bs-as;
+}
+function lgSubjOpts(sel,all){
+  var o=all?'<option value="all"'+(sel==="all"?" selected":"")+'>ทุกวิชา</option><option value="none"'+(sel==="none"?" selected":"")+'>ไม่ระบุวิชา</option>':'<option value="">ไม่ระบุวิชา</option>';
+  return o+S.subjects.map(function(s){return '<option value="'+s.id+'"'+(sel===s.id?" selected":"")+'>'+esc(s.name)+'</option>';}).join("");
+}
+function lgItemOpts(sid,sel){
+  var o='<option value="">ไม่ระบุหัวข้อย่อย 2</option>'; var sb=sid&&findSub(sid); if(!sb) return o;
+  sb.topics.forEach(function(t){ if(!t.items.length) return;
+    o+='<optgroup label="'+esc(t.name)+'">'+t.items.map(function(it){return '<option value="'+it.id+'"'+(sel===it.id?" selected":"")+'>'+esc(it.name)+'</option>';}).join("")+'</optgroup>';
+  }); return o;
+}
+function logChart(f){
+  var vals=[], max=0, i, lab=[];
+  for(i=6;i>=0;i--){
+    var ds=dayShift(-i), sec=0;
+    (S.sessions||[]).forEach(function(x){if(x.date===ds&&logPass(x,f,false)) sec+=x.sec;});
+    var d=dateParts(ds); vals.push({ds:ds,sec:sec,w:THDAY[d.getDay()],today:i===0}); if(sec>max) max=sec;
+    lab.push((i===0?"วันนี้":THDAY[d.getDay()]+" "+d.getDate()+"/"+(d.getMonth()+1))+" "+Math.round(sec/60)+" นาที");
+  }
+  var h='<div class="lgchart" role="img" aria-label="เวลาอ่าน 7 วันล่าสุด: '+esc(lab.join(", "))+'">';
+  vals.forEach(function(v){
+    var ht=max?Math.max(v.sec?4:0,Math.round(v.sec/max*100)):0;
+    h+='<div class="col'+(v.today?" today":"")+'" data-testid="lgbar" data-min="'+Math.round(v.sec/60)+'"><span class="v">'+(v.sec?Math.round(v.sec/60):"")+'</span><span class="bx"><i style="height:'+ht+'%"></i></span><span class="w">'+(v.today?"วันนี้":v.w)+'</span></div>';
+  });
+  return h+'</div>';
+}
+function logHtml(){
+  var f=LG();
+  if(f.subj!=="all"&&f.subj!=="none"&&!findSub(f.subj)) f.subj="all";
+  var list=(S.sessions||[]).filter(function(x){return logPass(x,f,true);}).sort(logSort);
+  var tot=0, days={}, byDay={}, order=[];
+  list.forEach(function(x){tot+=x.sec; days[x.date]=1; if(!byDay[x.date]){byDay[x.date]=[]; order.push(x.date);} byDay[x.date].push(x);});
+  var nd=order.length;
+  var rg=[["1","วันนี้"],["7","7 วัน"],["30","30 วัน"],["all","ทั้งหมด"]];
+  var h='<section class="panel lg" aria-labelledby="lgh"><div class="lghd"><h3 id="lgh">ประวัติการอ่าน</h3><button class="btn sm primary" data-act="log-add" data-fk="lg-add">+ เพิ่มย้อนหลัง</button></div>'+
+    '<div class="lgf"><div class="filters" role="group" aria-label="ช่วงวันที่">'+rg.map(function(r){return '<button class="chip" data-act="lg-range" data-r="'+r[0]+'" data-fk="lg-r-'+r[0]+'" aria-pressed="'+(f.range===r[0])+'">'+r[1]+'</button>';}).join("")+'</div>'+
+    '<div class="field"><label for="lgFilt">วิชา</label><select id="lgFilt" data-act="lg-filter-subj" data-fk="lg-filt">'+lgSubjOpts(f.subj,true)+'</select></div></div>'+
+    '<p class="lgsum" data-testid="lg-sum">'+(list.length?'รวม <b>'+fmtDur(tot)+'</b> · '+list.length+' ครั้ง · '+nd+' วัน':'ไม่มีรายการอ่านในช่วงและวิชาที่เลือก')+'</p>'+
+    logChart(f)+'<p class="hint" style="margin:0">กราฟแสดง 7 วันล่าสุดตามวิชาที่เลือก</p>';
+  order.forEach(function(ds){
+    var rows=byDay[ds], dsec=0; rows.forEach(function(x){dsec+=x.sec;});
+    h+='<div class="lgday" data-testid="lgday"><div class="dh"><b>'+dayLabel(ds)+'</b><span>รวม '+fmtDur(dsec)+'</span></div><ul class="lgrows">';
+    rows.forEach(function(x){
+      h+='<li class="lgrow" data-testid="lgrow"><span class="tm2">'+timeText(x)+(x.paused?' <span class="pz" title="มีการหยุดชั่วคราวระหว่างอ่าน" aria-label="มีการหยุดชั่วคราว">⏸</span>':"")+'</span><span class="mn">'+fmtDur(x.sec)+'</span><span class="who2">'+esc(logWho(x))+(x.manual?' <span class="badge">เพิ่มเอง</span>':"")+'</span>'+
+        '<span class="ac"><button class="btn sm" data-act="log-edit" data-id="'+x.id+'" data-fk="lge-'+x.id+'">แก้ไข</button><button class="btn sm danger" data-act="log-del" data-id="'+x.id+'" data-fk="lgd-'+x.id+'" aria-label="ลบรายการอ่าน '+esc(timeText(x))+'">ลบ</button></span></li>';
+    });
+    h+='</ul></div>';
+  });
+  return h+'</section>';
+}
+function readLogForm(m){
+  var g=function(id){var e=document.getElementById(id); return e?e.value:null;};
+  var v;
+  if((v=g("lgDate"))!==null) m.date=v; if((v=g("lgTime"))!==null) m.time=v; if((v=g("lgMin"))!==null) m.min=v;
+  if((v=g("lgSubj"))!==null) m.s=v||null;
+  if((v=g("lgItem"))!==null) m.it=v||null;
+}
+function tpOfItem(sid,iid){var r=null, sb=findSub(sid); if(sb&&iid) sb.topics.forEach(function(t){t.items.forEach(function(i){if(i.id===iid) r=t.id;});}); return r;}
+function logSave(m){
+  readLogForm(m); var add=m.type==="log-add", fail=function(t){m.err=t; render();};
+  var sid=m.s&&findSub(m.s)?m.s:null, iid=sid&&m.it&&tpOfItem(sid,m.it)?m.it:null, tid=iid?tpOfItem(sid,iid):null;
+  if(add){
+    if(!validDate(m.date)) return fail("เลือกวันที่ให้ถูกต้อง");
+    var tm=/^(\d{2}):(\d{2})$/.exec(m.time||""); if(!tm||+tm[1]>23||+tm[2]>59) return fail("ใส่เวลาเริ่มให้ถูกต้อง");
+    var ms=String(m.min==null?"":m.min).trim(); if(!/^\d+$/.test(ms)||+ms<1||+ms>720) return fail("จำนวนนาทีต้องเป็นจำนวนเต็ม 1–720");
+    var a=m.date.split("-"), st=new Date(+a[0],+a[1]-1,+a[2],+tm[1],+tm[2]).getTime();
+    if(st>Date.now()) return fail("เวลาเริ่มต้องไม่อยู่ในอนาคต");
+    S.sessions.push({id:uid(),date:dateOf(st),sec:+ms*60,s:sid,tp:tid,it:iid,start:st,end:st+(+ms)*60000,manual:true,paused:false});
+    save(); U.modal=null; render(); toast("เพิ่มรายการอ่านแล้ว");
+  } else {
+    var x=S.sessions.filter(function(q){return q.id===m.id;})[0];
+    if(x){x.s=sid; x.tp=tid; x.it=iid; save();}
+    U.modal=null; render(); toast("แก้ไขรายการแล้ว");
+  }
 }
 function renderOverlays(){
   var st=T.status, b="", m="", now=Date.now();
@@ -551,7 +689,7 @@ function renderOverlays(){
   var seen=Math.min(T.durMs,Math.max(0,T.accMs+(T.lastSeen-T.segStart)));
   if(endedAt-T.lastSeen<=2500) seen=T.durMs;
   if(T.phase==="read"&&seen<T.durMs) T.note="หน้าเว็บถูกปิดก่อนหมดเวลา จึงบันทึกเท่าที่เปิดอยู่";
-  finishPhase(endedAt,T.phase==="read"?seen:0);
+  finishPhase(endedAt,T.phase==="read"?seen:0,seen<T.durMs?Math.max(T.lastSeen,T.phaseStart||0):endedAt);
 })();
 /* ---------- views ---------- */
 function headerHtml(){
@@ -752,6 +890,16 @@ function modalHtml(){
     b='<h2 id="mt">ลบขั้นตอน "'+esc(cur.name)+'" ?</h2><p>มี '+m.count+' หัวข้อย่อย 2 อยู่ในขั้นตอนนี้ เลือกขั้นตอนที่จะย้ายไป</p><select id="modalSel" data-autofocus aria-label="ย้ายไปขั้นตอน">'+
       S.stages.filter(function(x){return x.id!==m.id;}).map(function(x){return '<option value="'+x.id+'">'+esc(x.name)+'</option>';}).join("")+'</select><div class="acts"><button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">ย้ายแล้วลบ</button></div>';}
   if(m.type==="tm-reset") b='<h2 id="mt">รีเซ็ตตัวจับเวลา ?</h2><p>เวลาที่เดินไปแล้ว '+fmtDur(m.sec)+' ในช่วงอ่านนี้จะไม่ถูกบันทึก ถ้าอยากเก็บเวลาไว้ ให้ใช้ปุ่ม "จบรอบนี้เลย" แทน</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">รีเซ็ตโดยไม่บันทึก</button></div>';
+  if(m.type==="log-add"||m.type==="log-edit"){
+    var add=m.type==="log-add", xs=add?null:S.sessions.filter(function(q){return q.id===m.id;})[0];
+    b='<h2 id="mt">'+(add?"เพิ่มรายการอ่านย้อนหลัง":"แก้ไขรายการอ่าน")+'</h2>'+
+      (add?'<div class="sg2"><div class="field"><label for="lgDate">วันที่</label><input type="date" id="lgDate" data-autofocus max="'+todayStr()+'" value="'+esc(m.date||"")+'"></div><div class="field"><label for="lgTime">เวลาเริ่ม</label><input type="time" id="lgTime" value="'+esc(m.time||"")+'"></div><div class="field"><label for="lgMin">อ่านกี่นาที (1–720)</label><input type="number" id="lgMin" min="1" max="720" step="1" value="'+esc(m.min==null?"":m.min)+'"></div></div>':
+        '<p>'+(xs?esc(dayLabel(xs.date)+" · "+timeText(xs)+" · "+fmtDur(xs.sec)):"")+' (แก้ได้เฉพาะวิชาและหัวข้อย่อย 2)</p>')+
+      '<div class="field"><label for="lgSubj">วิชา</label><select id="lgSubj" data-act="lg-subj"'+(add?"":" data-autofocus")+'>'+lgSubjOpts(m.s||"",false)+'</select></div>'+
+      '<div class="field"><label for="lgItem">หัวข้อย่อย 2</label><select id="lgItem"'+(m.s?"":" disabled")+'>'+lgItemOpts(m.s,m.it)+'</select></div>'+
+      (m.err?'<p class="err" role="alert" data-testid="lg-err">'+esc(m.err)+'</p>':"")+
+      '<div class="acts"><button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">'+(add?"เพิ่มรายการ":"บันทึก")+'</button></div>';
+  }
   if(m.type==="reset") b='<h2 id="mt">ล้างข้อมูลทั้งหมด ?</h2><p>ลบทุกวิชา ทุกหัวข้อ และ Pipeline ที่แก้ไว้ ไม่สามารถเลิกทำได้ ควรสำรองข้อมูลก่อน</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ล้างข้อมูล</button></div>';
   return '<div class="scrim" data-act="scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">'+b+'</div></div>';
 }
@@ -800,6 +948,8 @@ function modalOk(){
     var target=$("#modalSel").value; snapshot();
     S.subjects.forEach(function(s){s.topics.forEach(function(t){t.items.forEach(function(it){if(it.stage===m.id) it.stage=target;});});});
     removeStage(m.id); U.modal=null; render(); toast("ลบขั้นตอนและย้ายหัวข้อย่อย 2 แล้ว",true);
+  } else if(m.type==="log-add"||m.type==="log-edit"){
+    logSave(m);
   } else if(m.type==="tm-reset"){
     resetTimer(); U.modal=null; render();
   } else if(m.type==="reset"){
@@ -872,10 +1022,17 @@ document.addEventListener("click",function(e){
     }catch(err){toast("ดาวน์โหลดไม่ได้ ใช้ปุ่มคัดลอกข้อมูลแทน");} break;
   case "import": importNow(); break;
   case "reset": U.modal={type:"reset"}; render(); break;
+  case "lg-range": LG().range=d.r; render(); break;
+  case "log-add": U.modal={type:"log-add",date:todayStr(),time:"",min:"",s:LG().subj!=="all"&&LG().subj!=="none"?LG().subj:null,it:null}; render(); break;
+  case "log-edit":
+    var lx=S.sessions.filter(function(q){return q.id===d.id;})[0];
+    if(lx){U.modal={type:"log-edit",id:lx.id,s:lx.s,it:lx.it}; render();} break;
+  case "log-del":
+    snapshot(); S.sessions=S.sessions.filter(function(q){return q.id!==d.id;}); save(); render(); toast("ลบรายการอ่านแล้ว",true); break;
   case "tm-start": startPhase("read"); render(); break;
   case "tm-toggle":
     var tn=Date.now();
-    if(T.status==="running"){T.accMs=elapsedMs(tn); T.segStart=null; T.status="paused";}
+    if(T.status==="running"){T.accMs=elapsedMs(tn); T.segStart=null; T.status="paused"; T.paused=true;}
     else if(T.status==="paused"){T.segStart=tn; T.status="running"; T.lastSeen=tn;}
     saveT(); render(); break;
   case "tm-end": finishPhase(Date.now(),elapsedMs(Date.now())); break;
@@ -911,6 +1068,8 @@ document.addEventListener("change",function(e){
   if(a==="rename-item"){var v1=t.value.trim(); if(!v1){render();return;} findItem(d.s,d.tp,d.it).name=v1; save(); render();}
   if(a==="rename-subj"){var v2=t.value.trim(); if(!v2){render();return;} findSub(d.s).name=v2; save(); render();}
   if(a==="set-due"){var it=findItem(d.s,d.tp,d.it); it.due=validDate(t.value)?t.value:null; save(); render();}
+  if(a==="lg-filter-subj"){LG().subj=t.value; render(); return;}
+  if(a==="lg-subj"&&U.modal){readLogForm(U.modal); U.modal.s=t.value||null; U.modal.it=null; U.modal.err=null; render(); return;}
   if(a==="pomo-set"){
     var pk=d.k, pp=S.settings.pomo;
     if(pk==="longOn") pp.longOn=t.checked;
@@ -944,5 +1103,4 @@ setInterval(tick,250);
 document.addEventListener("visibilitychange",function(){if(!document.hidden) tick();});
 })();
 </script>
-
 </body></html>
