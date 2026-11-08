@@ -1,4 +1,4 @@
-<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body style="margin:0"><title>เช็คลิสต์อ่านหนังสือ</title>
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body style="margin:0"><title>Study & Habit</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
@@ -294,6 +294,65 @@ ul.lgrows{list-style:none;margin:0;padding:0}
 .modal .field label{font-size:.85rem;color:var(--muted)}
 .modal p.err{color:var(--over);font-weight:600}
 @media (max-width:620px){.lgrow{grid-template-columns:1fr auto;grid-template-areas:"tm mn" "who who" "ac ac"}.lgrow .tm2{grid-area:tm}.lgrow .mn{grid-area:mn;text-align:right}.lgrow .who2{grid-area:who}.lgrow .ac{grid-area:ac}}
+
+.top .hl{display:flex;align-items:center;gap:12px;min-width:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sech{font-size:1.1rem;margin:28px 0 10px}
+.panel>*{min-width:0}.panel input[type=file]{max-width:100%}.panel .row{flex-wrap:wrap}
+.homegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.hcard{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.hcard:hover{border-color:var(--ink)}
+.hc-ico{font-size:1.8rem;line-height:1}
+.hc-t{font-family:var(--f-display);font-weight:700;font-size:1.25rem}
+.hc-big{font-family:var(--f-display);font-weight:700;font-size:2.4rem;line-height:1.1;margin-top:6px}
+.hc-sub{color:var(--muted)}
+.hc-meta{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--ink);font-size:.9rem;margin-top:4px}
+.hc-go{margin-top:auto;padding-top:10px;font-weight:600}
+.hbbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.hbnav{display:flex;align-items:center;gap:8px}
+.hbnav b{font-family:var(--f-display);font-size:1.15rem;min-width:9ch;text-align:center}
+.hbscroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table.hbt{border-collapse:separate;border-spacing:0;min-width:100%}
+.hbt th,.hbt td{padding:3px;text-align:center;border-bottom:1px solid var(--line)}
+.hbt tbody tr:last-child th,.hbt tbody tr:last-child td{border-bottom:0}
+.hbt .hn{position:sticky;left:0;z-index:2;background:var(--surface);text-align:left;min-width:170px;max-width:210px;padding:8px 10px;border-right:1px solid var(--line)}
+.hbt thead th{font-weight:500;color:var(--muted);font-size:.78rem;line-height:1.2}
+.hbt thead th i{display:block;font-style:normal;font-size:.7rem}
+.hbt thead th.hn{color:var(--ink)}
+.hbt th.hd{min-width:36px}
+.hbt th.today,.hbt td.today{background:color-mix(in srgb,var(--k1) 12%,var(--surface))}
+.hbt th.today{color:var(--ink);font-weight:700}
+.hbt th.fut{opacity:.55}
+.hbname{display:flex;gap:6px;align-items:center;border:0;background:none;padding:2px 0;min-height:30px;text-align:left;font-weight:600;max-width:100%}
+.hbname .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.hbname:hover .nm{text-decoration:underline}
+.hbst{display:block;font-size:.74rem;color:var(--muted);font-weight:400;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hbc{position:relative;width:32px;height:32px;border:1px solid var(--line);background:var(--bg);border-radius:8px;font-weight:700;color:var(--onk);padding:0;display:inline-flex;align-items:center;justify-content:center}
+.hbc:hover:not(:disabled){border-color:var(--sc,var(--ink))}
+.hbc.on{background:var(--sc);border-color:var(--sc)}
+.hbc.on{font-size:1.05rem;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--onk) 25%,transparent)}
+.hbc.off:not(.on){background:repeating-linear-gradient(45deg,transparent 0 4px,var(--line) 4px 5px);border-style:dashed;opacity:.6}
+.hbc:disabled{cursor:not-allowed}
+.hbc:disabled:not(.on):not(.off){opacity:.45}
+.hbarch{list-style:none;margin:0;padding:0}
+.hbarch li{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.hbarch li:first-child{border-top:0}
+.hbarch .nm{font-weight:600;flex:1 1 160px;min-width:0;overflow-wrap:anywhere}
+.hbarch .ac{display:flex;gap:6px}
+.hbems{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.hbem{border:1px solid var(--line);background:var(--bg);border-radius:8px;min-width:36px;min-height:36px;font-size:1.1rem;padding:0}
+.hbsws{display:flex;flex-wrap:wrap;gap:8px}
+.hbsw{width:30px;height:30px;border-radius:50%;border:2px solid var(--surface);background:var(--sc);padding:0}
+.hbsw[aria-checked="true"]{box-shadow:0 0 0 2px var(--ink)}
+.hbdays{display:flex;flex-wrap:wrap;gap:6px}
+.dchk{display:inline-flex}
+.dchk input{position:absolute;opacity:0;width:1px;height:1px}
+.dchk span{border:1px solid var(--line);background:var(--bg);border-radius:8px;min-width:42px;min-height:38px;display:inline-flex;align-items:center;justify-content:center;font-weight:500}
+.dchk input:checked+span{background:var(--ink-btn);color:var(--on-btn);border-color:var(--ink-btn)}
+.dchk input:focus-visible+span{outline:2px solid var(--focus);outline-offset:2px}
+.modal .row{display:flex;gap:6px;flex-wrap:wrap}
+.modal{max-height:calc(100dvh - 32px);overflow-y:auto}
+@media (max-width:620px){.hbt .hn{min-width:140px;max-width:150px}.hbc{width:34px;height:34px}.hc-big{font-size:2rem}}
 </style>
 
 <div class="wrap"><div id="bannerRoot"></div><div id="root"></div></div>
@@ -335,7 +394,7 @@ function validDate(s){
 }
 
 /* ---------- state ---------- */
-function fresh(){return {v:2,setup:false,settings:{warnDays:3,pomo:{read:25,short:5,long:15,every:4,longOn:true}},stages:clone(DEFAULT_STAGES),subjects:[],sessions:[]};}
+function fresh(){return {v:2,setup:false,settings:{warnDays:3,pomo:{read:25,short:5,long:15,every:4,longOn:true}},stages:clone(DEFAULT_STAGES),subjects:[],sessions:[],habits:[]};}
 function normalize(o){
   if(!o||typeof o!=="object") throw "ข้อมูลนี้ไม่ใช่ไฟล์ของแอปนี้";
   if(o.v!==2) throw "ไฟล์นี้เป็นรูปแบบเวอร์ชันเก่า (วิชา → หัวข้อ) นำเข้าในเวอร์ชันนี้ไม่ได้";
@@ -371,7 +430,21 @@ function normalize(o){
     var itt=tpp&&tpp.items.filter(function(q){return q.id===x.it;})[0];
     sessions.push({id:String(x.id||uid()),date:dt,sec:sec,s:sb?sb.id:null,tp:tpp?tpp.id:null,it:itt?itt.id:null,start:hasT?stt:null,end:hasT?enn:null,manual:x.manual===true,paused:x.paused===true});
   });
-  return {v:2,setup:true,settings:{warnDays:wd,pomo:pomoS},stages:stages,subjects:subjects,sessions:sessions};
+  return {v:2,setup:true,settings:{warnDays:wd,pomo:pomoS},stages:stages,subjects:subjects,sessions:sessions,habits:normHabits(o.habits)};
+}
+function normHabits(a){
+  var out=[], seen={};
+  (Array.isArray(a)?a:[]).forEach(function(h,i){
+    if(!h||typeof h!=="object") return;
+    var done={}; if(h.done&&typeof h.done==="object") Object.keys(h.done).forEach(function(k){if(validDate(k)&&h.done[k]) done[k]=1;});
+    var days=[]; (Array.isArray(h.days)?h.days:[]).forEach(function(d){d=+d; if(d>=0&&d<=6&&d%1===0&&days.indexOf(d)<0) days.push(d);}); days.sort(); if(!days.length) days=[0,1,2,3,4,5,6];
+    var c=Math.round(+h.color); if(!(c>=0&&c<=7)) c=1;
+    var em=Array.from(String(h.emoji==null?"":h.emoji).trim()).slice(0,2).join("")||"✅";
+    var id=String(h.id||uid()); while(seen[id]) id=uid(); seen[id]=1;
+    var cr=validDate(h.created)?h.created:null; if(!cr){cr=todayStr(); Object.keys(done).forEach(function(k){if(k<cr) cr=k;});}
+    out.push({id:id,name:String(h.name||"").trim().slice(0,60)||("Habit "+(i+1)),emoji:em,color:c,days:days,archived:h.archived===true,created:cr,done:done});
+  });
+  return out;
 }
 function load(){
   var raw=lsGet(KEY);
@@ -379,7 +452,8 @@ function load(){
   return fresh();
 }
 var S=load();
-var U={view:S.setup?"overview":"setup",subj:"all",filter:"all",near:false,fold:{},modal:null,draft:null};
+function secFromHash(){try{var m=/^#\/(study|habit)\/?$/.exec(location.hash); return m?m[1]:"home";}catch(e){return "home";}}
+var U={sec:secFromHash(),view:S.setup?"overview":"setup",subj:"all",filter:"all",near:false,fold:{},modal:null,draft:null};
 var undoSnap=null;
 function save(){lsSet(KEY,JSON.stringify(S));}
 
@@ -667,6 +741,124 @@ function logSave(m){
     U.modal=null; render(); toast("แก้ไขรายการแล้ว");
   }
 }
+/* ---------- navigation ---------- */
+function setHash(sec){try{var h="#/"+(sec==="home"?"":sec); if(location.hash!==h) location.hash=h;}catch(e){}}
+function goSec(sec){U.sec=sec; U.hbScroll=null; U.modal=null; setHash(sec); render(); window.scrollTo(0,0);}
+window.addEventListener("hashchange",function(){var x=secFromHash(); if(x!==U.sec){U.sec=x; U.hbScroll=null; U.modal=null; render(); window.scrollTo(0,0);}});
+
+/* ---------- habits ---------- */
+var MTH=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+var EMOJIS=["✅","📖","💪","🏃","💧","😴","🧘","✍️","🥗","🎯","🦷","🧹"];
+function HM(){if(!U.hm){var n=new Date(); U.hm={y:n.getFullYear(),m:n.getMonth()};} return U.hm;}
+function ymd(y,m,d){return y+"-"+pad(m+1)+"-"+pad(d);}
+function addDays(ds,n){var d=dateParts(ds); d.setHours(12); d.setDate(d.getDate()+n); return dateOf(d.getTime());}
+function hbActive(){return (S.habits||[]).filter(function(h){return !h.archived;});}
+function findHabit(id){return (S.habits||[]).filter(function(h){return h.id===id;})[0];}
+function hbReq(h,ds){return h.days.indexOf(dateParts(ds).getDay())>=0;}
+function hbFirst(h){var f=h.created; Object.keys(h.done).forEach(function(k){if(k<f) f=k;}); return f;}
+function hbStreak(h){
+  var today=todayStr(), first=hbFirst(h), d=today, n=0, g=0;
+  while(d>=first&&g++<20000){
+    if(h.done[d]) n++; else if(hbReq(h,d)&&d!==today) break;
+    d=addDays(d,-1);
+  }
+  return n;
+}
+function hbBest(h){
+  var today=todayStr(), d=hbFirst(h), cur=0, best=0, g=0;
+  while(d<=today&&g++<20000){
+    if(h.done[d]){cur++; if(cur>best) best=cur;} else if(hbReq(h,d)&&d!==today) cur=0;
+    d=addDays(d,1);
+  }
+  return best;
+}
+function hbPct(h,y,m){
+  var today=todayStr(), first=hbFirst(h), a=ymd(y,m,1), z=ymd(y,m,new Date(y,m+1,0).getDate());
+  var d=a<first?first:a, end=z>today?today:z, num=0, den=0, g=0;
+  while(d<=end&&g++<40){ if(hbReq(h,d)){den++; if(h.done[d]) num++;} d=addDays(d,1); }
+  return den?Math.round(num/den*100):null;
+}
+function homeHtml(){
+  var sc, hc, today=todayStr();
+  if(!S.setup) sc='<span class="hc-sub">ยังไม่ได้ตั้งต้น แตะเพื่อเริ่มต้นใช้งาน</span>';
+  else {
+    var all=stats(allItems()), dl=dueList(), ov=dl.filter(function(x){return x.i.kind==="over";}).length;
+    sc='<span class="hc-big" data-testid="home-pct">'+all.pct+'%</span><span class="hc-sub">ความคืบหน้ารวม · '+all.done+' จาก '+all.total+' หัวข้อย่อย 2</span>'+
+      '<span class="hc-meta"><span data-testid="home-read">⏱ อ่านวันนี้ '+fmtDur(secToday())+'</span><span data-testid="home-due">📌 ใกล้/เลยกำหนด '+dl.length+(ov?' (เลย '+ov+')':'')+'</span></span>';
+  }
+  var act=hbActive();
+  if(!act.length) hc='<span class="hc-sub">ยังไม่มี Habit แตะเพื่อเพิ่มอันแรก</span>';
+  else {
+    var req=act.filter(function(h){return hbReq(h,today);}), dn=req.filter(function(h){return h.done[today];}).length, bs=0, bn="";
+    act.forEach(function(h){var c=hbStreak(h); if(c>bs){bs=c; bn=h.name;}});
+    hc=(req.length?'<span class="hc-big" data-testid="home-habit">'+dn+'/'+req.length+'</span><span class="hc-sub">ทำแล้ววันนี้</span>':'<span class="hc-big" data-testid="home-habit">–</span><span class="hc-sub">วันนี้ไม่มี Habit ที่ต้องทำ</span>')+
+      '<span class="hc-meta"><span data-testid="home-streak">'+(bs?'🔥 สตรีก '+bs+' วัน · '+esc(bn):'🔥 ยังไม่มีสตรีก')+'</span></span>';
+  }
+  return '<section class="homegrid" aria-label="เลือกส่วน">'+
+    '<button class="hcard" data-act="go" data-sec="study" data-fk="hc-study" data-testid="card-study"><span class="hc-ico" aria-hidden="true">📚</span><span class="hc-t">Study Tracker</span>'+sc+'<span class="hc-go">เข้าไป →</span></button>'+
+    '<button class="hcard" data-act="go" data-sec="habit" data-fk="hc-habit" data-testid="card-habit"><span class="hc-ico" aria-hidden="true">🔥</span><span class="hc-t">Habit Tracker</span>'+hc+'<span class="hc-go">เข้าไป →</span></button></section>'+
+    '<h2 class="sech">สำรองและจัดการข้อมูล</h2>'+dataHtml();
+}
+function habitHtml(){
+  var hm=HM(), y=hm.y, m=hm.m, dim=new Date(y,m+1,0).getDate(), today=todayStr(), now=new Date();
+  var isCur=y*12+m>=now.getFullYear()*12+now.getMonth();
+  var act=hbActive(), arch=(S.habits||[]).filter(function(h){return h.archived;});
+  var h='<div class="hbbar"><div class="hbnav"><button class="btn sm" data-act="hb-prev" data-fk="hb-prev" aria-label="เดือนก่อนหน้า">‹</button><b data-testid="hb-month">'+MTH[m]+' '+(y+543)+'</b>'+
+    '<button class="btn sm" data-act="hb-next" data-fk="hb-next" aria-label="เดือนถัดไป"'+(isCur?" disabled":"")+'>›</button>'+(isCur?"":'<button class="btn sm" data-act="hb-today" data-fk="hb-today">เดือนนี้</button>')+'</div>'+
+    '<button class="btn primary" data-act="hb-add" data-fk="hb-add">+ เพิ่ม Habit</button></div>';
+  if(!act.length) h+='<div class="empty">ยังไม่มี Habit ที่กำลังติดตาม<br><span class="hint">เพิ่มได้ไม่จำกัดจำนวน แล้วกดช่องวันที่เพื่อขีดฆ่าว่าทำแล้ว</span><div class="row" style="justify-content:center;margin-top:12px"><button class="btn primary" data-act="hb-add">+ เพิ่ม Habit แรก</button></div></div>';
+  else {
+    h+='<div class="hbscroll"><table class="hbt"><caption class="sr">ตาราง Habit เดือน'+MTH[m]+' '+(y+543)+'</caption><thead><tr><th scope="col" class="hn">Habit</th>';
+    for(var d=1;d<=dim;d++){var ds=ymd(y,m,d), wd=new Date(y,m,d).getDay(); h+='<th scope="col" class="hd'+(ds===today?" today":"")+(ds>today?" fut":"")+'"><span>'+d+'</span><i>'+THDAY[wd]+'</i></th>';}
+    h+='</tr></thead><tbody>';
+    act.forEach(function(hb){
+      var cur=hbStreak(hb), best=hbBest(hb), pc=hbPct(hb,y,m);
+      h+='<tr data-testid="hbrow" data-id="'+hb.id+'"><th scope="row" class="hn c'+hb.color+'"><button class="hbname" data-act="hb-edit" data-id="'+hb.id+'" data-fk="hbe-'+hb.id+'" title="แก้ไข Habit นี้"><span class="em" aria-hidden="true">'+esc(hb.emoji)+'</span><span class="nm">'+esc(hb.name)+'</span></button>'+
+        '<span class="hbst" data-cur="'+cur+'" data-best="'+best+'" data-pct="'+(pc==null?"":pc)+'">🔥 '+cur+' วัน · สูงสุด '+best+' · '+(pc==null?"–":pc+"%")+'</span></th>';
+      for(var d2=1;d2<=dim;d2++){
+        var dd=ymd(y,m,d2), on=!!hb.done[dd], req=hbReq(hb,dd), fut=dd>today, dis=fut||(!req&&!on);
+        h+='<td class="'+(dd===today?"today":"")+'"><button class="hbc c'+hb.color+(on?" on":"")+(!req?" off":"")+'" data-act="hb-toggle" data-id="'+hb.id+'" data-d="'+dd+'" data-fk="hbc-'+hb.id+'-'+dd+'" aria-pressed="'+on+'"'+(dis?" disabled":"")+
+          ' aria-label="'+esc(hb.name)+' วันที่ '+d2+' '+MTH[m]+(on?" ทำแล้ว":(req?" ยังไม่ได้ทำ":" ไม่ใช่วันที่ต้องทำ"))+'">'+(on?"✓":"")+'</button></td>';
+      }
+      h+='</tr>';
+    });
+    h+='</tbody></table></div><p class="hint">กดช่องเพื่อขีดฆ่า กดซ้ำเพื่อยกเลิก · ช่องจางคือวันที่ไม่ต้องทำ · วันที่ยังมาไม่ถึงกดไม่ได้ · สตรีกนับต่อเนื่องเฉพาะวันที่ต้องทำ</p>';
+  }
+  if(arch.length){
+    h+='<section class="panel" aria-labelledby="archh"><h3 id="archh">เก็บถาวรแล้ว ('+arch.length+')</h3><ul class="hbarch">'+arch.map(function(a){
+      return '<li data-testid="hbarch"><span class="nm">'+esc(a.emoji)+' '+esc(a.name)+'</span><span class="hint">สตรีกสูงสุด '+hbBest(a)+' วัน</span><span class="ac"><button class="btn sm" data-act="hb-restore" data-id="'+a.id+'" data-fk="hbr-'+a.id+'">กู้คืน</button><button class="btn sm danger" data-act="hb-del-ask" data-id="'+a.id+'">ลบถาวร</button></span></li>';}).join("")+'</ul></section>';
+  }
+  return h;
+}
+function readHabitForm(m){
+  var n=document.getElementById("hbName"), e=document.getElementById("hbEmoji");
+  if(n) m.name=n.value; if(e) m.emoji=e.value;
+  var bx=document.querySelectorAll("#hbDays input"); if(bx.length){m.days=[]; for(var i=0;i<bx.length;i++) if(bx[i].checked) m.days.push(+bx[i].value);}
+}
+function habitModalHtml(m){
+  var add=!m.id, sw="", i;
+  for(i=0;i<8;i++) sw+='<button type="button" class="hbsw c'+i+'" role="radio" aria-checked="'+(m.color===i)+'" aria-label="สี '+(i+1)+'" data-act="hb-color" data-k="'+i+'"></button>';
+  var em=EMOJIS.map(function(x){return '<button type="button" class="hbem" data-act="hb-emoji" data-e="'+x+'" aria-label="อีโมจิ '+x+'">'+x+'</button>';}).join("");
+  var dy=""; for(i=0;i<7;i++){var k=(i+1)%7; dy+='<label class="dchk"><input type="checkbox" value="'+k+'"'+(m.days.indexOf(k)>=0?" checked":"")+'><span>'+THDAY[k]+'</span></label>';}
+  return '<h2 id="mt">'+(add?"เพิ่ม Habit":"แก้ไข Habit")+'</h2>'+
+    '<div class="field"><label for="hbName">ชื่อ Habit</label><input id="hbName" data-autofocus maxlength="60" placeholder="เช่น อ่านหนังสือ 30 นาที" value="'+esc(m.name||"")+'"></div>'+
+    '<div class="field"><label for="hbEmoji">อีโมจิ</label><input id="hbEmoji" maxlength="8" value="'+esc(m.emoji||"")+'" aria-describedby="hbEmH"><div class="hbems" id="hbEmH">'+em+'</div></div>'+
+    '<div class="field"><label id="hbColL">สี</label><div class="hbsws" role="radiogroup" aria-labelledby="hbColL">'+sw+'</div></div>'+
+    '<div class="field"><label id="hbDayL">วันที่ต้องทำ</label><div class="hbdays" id="hbDays" role="group" aria-labelledby="hbDayL">'+dy+'</div>'+
+    '<div class="row"><button type="button" class="btn sm" data-act="hb-days" data-p="all">ทุกวัน</button><button type="button" class="btn sm" data-act="hb-days" data-p="wk">จ–ศ</button><button type="button" class="btn sm" data-act="hb-days" data-p="we">ส–อา</button></div></div>'+
+    (m.err?'<p class="err" role="alert" data-testid="hb-err">'+esc(m.err)+'</p>':"")+
+    '<div class="acts">'+(add?"":'<button class="btn" data-act="hb-archive" data-id="'+m.id+'">เก็บถาวร</button><button class="btn danger" data-act="hb-del-ask" data-id="'+m.id+'">ลบถาวร</button>')+
+    '<button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">'+(add?"เพิ่ม Habit":"บันทึก")+'</button></div>';
+}
+function habitSave(m){
+  readHabitForm(m);
+  var nm=(m.name||"").trim().slice(0,60), fail=function(t){m.err=t; render();};
+  if(!nm) return fail("ใส่ชื่อ Habit ก่อน");
+  if(!m.days.length) return fail("เลือกวันที่ต้องทำอย่างน้อย 1 วัน");
+  var em=Array.from(String(m.emoji||"").trim()).slice(0,2).join("")||"✅", days=m.days.slice().sort();
+  if(m.id){var h=findHabit(m.id); if(h){h.name=nm; h.emoji=em; h.color=m.color; h.days=days;} save(); U.modal=null; render(); toast("บันทึก Habit แล้ว");}
+  else {S.habits.push({id:uid(),name:nm,emoji:em,color:m.color,days:days,archived:false,created:todayStr(),done:{}}); save(); U.modal=null; render(); toast("เพิ่ม Habit \""+nm+"\" แล้ว");}
+}
 function renderOverlays(){
   var st=T.status, b="", m="", now=Date.now();
   if(st==="waiting"){
@@ -675,7 +867,7 @@ function renderOverlays(){
       (read?"บันทึกเวลาอ่าน "+fmtDur(T.lastCredit)+" ให้ "+esc(T.lastLabel):"พร้อมเริ่มรอบถัดไปเมื่อคุณพร้อม")+(T.note?" · "+esc(T.note):"")+' · <span data-tm="over"></span></span></div>'+
       '<button class="btn primary" data-act="tm-next" data-fk="bn-main">'+(read?"เข้าช่วงพัก ("+Math.round(phaseMs(T.next||"short")/60000)+" นาที)":"เริ่มช่วงอ่านรอบถัดไป")+'</button></div>';
   }
-  var showMini=(st==="running"||st==="paused")&&U.view!=="timer";
+  var showMini=(st==="running"||st==="paused")&&!(U.sec==="study"&&U.view==="timer");
   if(showMini) m='<div class="mini" role="group" aria-label="ตัวจับเวลา"><span class="ph">'+phaseName(T.phase)+(st==="paused"?" (หยุด)":"")+'</span><span class="t" data-tm="time">'+fmtClock(remainMs(now))+'</span><span class="who">'+esc(selLabel())+'</span>'+
     '<button data-act="tm-toggle" data-fk="mini-toggle">'+(st==="running"?"หยุด":"ต่อ")+'</button><button data-act="nav" data-v="timer">เปิด</button></div>';
   $("#bannerRoot").innerHTML=b; $("#miniRoot").innerHTML=m;
@@ -693,12 +885,14 @@ function renderOverlays(){
 })();
 /* ---------- views ---------- */
 function headerHtml(){
-  var dark=effTheme()==="dark";
-  return '<header class="top"><div class="brand">เช็คลิสต์อ่านหนังสือ<small>วิชา › หัวข้อย่อย › หัวข้อย่อย 2 ติดตามตั้งแต่ยังไม่อ่านจนทำควิซเสร็จ</small></div>'+
+  var dark=effTheme()==="dark", sec=U.sec;
+  var back=sec==="home"?"":'<button class="btn sm" data-act="go" data-sec="home" data-fk="back">← หน้าแรก</button>';
+  var ttl=sec==="home"?'หน้าแรก<small>เลือกส่วนที่ต้องการใช้งาน</small>':sec==="habit"?'Habit Tracker<small>ขีดฆ่าสิ่งที่ทำต่อเนื่องในแต่ละวัน</small>':'เช็คลิสต์อ่านหนังสือ<small>วิชา › หัวข้อย่อย › หัวข้อย่อย 2 ติดตามตั้งแต่ยังไม่อ่านจนทำควิซเสร็จ</small>';
+  return '<header class="top"><div class="hl">'+back+'<div class="brand">'+ttl+'</div></div>'+
     '<button class="btn" data-act="theme" data-fk="theme" aria-pressed="'+dark+'">'+(dark?"โหมดสว่าง":"โหมดมืด")+'</button></header>';
 }
 function navHtml(){
-  var tabs=[["overview","ภาพรวม"],["topics","หัวข้อ"],["timer","จับเวลา"],["pipeline","Pipeline"],["data","ข้อมูล"]];
+  var tabs=[["overview","ภาพรวม"],["topics","หัวข้อ"],["timer","จับเวลา"],["pipeline","Pipeline"]];
   return '<nav class="tabs" aria-label="เมนูหลัก">'+tabs.map(function(t){
     return '<button data-act="nav" data-v="'+t[0]+'" data-fk="nav-'+t[0]+'"'+(U.view===t[0]?' aria-current="page"':"")+'>'+t[1]+'</button>';
   }).join("")+'</nav>';
@@ -829,15 +1023,15 @@ function pipelineHtml(){
   h+='<div class="row"><button class="btn primary" data-act="stage-add">+ เพิ่มขั้นตอน</button><span class="hint">ต้องมีอย่างน้อย 2 ขั้นตอน และอย่างน้อย 1 ขั้นที่นับเป็นเสร็จ</span></div></div>';
   return h;
 }
-function exportJson(){return JSON.stringify({v:2,app:"study-tracker",settings:S.settings,stages:S.stages,subjects:S.subjects,sessions:S.sessions},null,2);}
+function exportJson(){return JSON.stringify({v:2,app:"study-tracker",settings:S.settings,stages:S.stages,subjects:S.subjects,sessions:S.sessions,habits:S.habits},null,2);}
 function dataHtml(){
-  return '<div class="panel"><h3>สำรองข้อมูล</h3><p>ข้อมูลถูกเก็บในเบราว์เซอร์นี้เท่านั้น ถ้าล้างข้อมูลเว็บหรือเปลี่ยนเครื่อง ข้อมูลจะหาย จึงควรสำรองไว้เป็นระยะ</p>'+
+  return '<div class="panel"><h3>สำรองข้อมูล (Study + Habit)</h3><p>ข้อมูลถูกเก็บในเบราว์เซอร์นี้เท่านั้น ถ้าล้างข้อมูลเว็บหรือเปลี่ยนเครื่อง ข้อมูลจะหาย จึงควรสำรองไว้เป็นระยะ</p>'+
     '<textarea class="code" id="exportText" readonly aria-label="ข้อมูลสำรอง">'+esc(exportJson())+'</textarea>'+
     '<div class="row"><button class="btn primary" data-act="copy">คัดลอกข้อมูล</button><button class="btn" data-act="download">ดาวน์โหลดเป็นไฟล์ .json</button></div></div>'+
-    '<div class="panel"><h3>นำเข้าข้อมูล</h3><p>วางข้อมูลสำรองลงในช่อง หรือเลือกไฟล์ .json การนำเข้าจะแทนที่ข้อมูลปัจจุบันทั้งหมด (ไฟล์สำรองจากเวอร์ชันเก่าที่ไม่มีหัวข้อย่อย 2 นำเข้าไม่ได้)</p>'+
+    '<div class="panel"><h3>นำเข้าข้อมูล</h3><p>วางข้อมูลสำรองลงในช่อง หรือเลือกไฟล์ .json การนำเข้าจะแทนที่ข้อมูลปัจจุบันทั้งหมด (ไฟล์สำรองจากเวอร์ชันเก่าที่ไม่มีหัวข้อย่อย 2 นำเข้าไม่ได้ ไฟล์ที่ไม่มีข้อมูล Habit จะคงข้อมูล Habit ปัจจุบันไว้)</p>'+
     '<textarea class="code" id="importText" aria-label="วางข้อมูลที่ต้องการนำเข้า" placeholder="{ ... }"></textarea>'+
     '<div class="row"><input type="file" id="importFile" accept=".json,application/json" aria-label="เลือกไฟล์ข้อมูล"><button class="btn primary" data-act="import">นำเข้า</button></div></div>'+
-    '<div class="panel"><h3>เริ่มใหม่ทั้งหมด</h3><p>ลบวิชา หัวข้อ และ Pipeline ทั้งหมด แล้วกลับไปหน้าตั้งต้น</p><div class="row"><button class="btn danger" data-act="reset">ล้างข้อมูลทั้งหมด</button></div></div>';
+    '<div class="panel"><h3>เริ่มใหม่</h3><p>เลือกล้างทั้งหมด เฉพาะ Study หรือเฉพาะ Habit ได้</p><div class="row"><button class="btn danger" data-act="reset">ล้างข้อมูลทั้งหมด</button></div></div>';
 }
 /* ---------- setup ---------- */
 function initDraft(){U.draft=[]; for(var i=0;i<DRAFT_SLOTS;i++) U.draft.push({name:"",text:""});}
@@ -900,17 +1094,22 @@ function modalHtml(){
       (m.err?'<p class="err" role="alert" data-testid="lg-err">'+esc(m.err)+'</p>':"")+
       '<div class="acts"><button class="btn" data-act="modal-cancel">ยกเลิก</button><button class="btn primary" data-act="modal-ok">'+(add?"เพิ่มรายการ":"บันทึก")+'</button></div>';
   }
-  if(m.type==="reset") b='<h2 id="mt">ล้างข้อมูลทั้งหมด ?</h2><p>ลบทุกวิชา ทุกหัวข้อ และ Pipeline ที่แก้ไว้ ไม่สามารถเลิกทำได้ ควรสำรองข้อมูลก่อน</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ล้างข้อมูล</button></div>';
+  if(m.type==="habit") b=habitModalHtml(m);
+  if(m.type==="hb-del"){var hd=findHabit(m.id); b='<h2 id="mt">ลบ Habit "'+esc(hd.name)+'" ถาวร ?</h2><p>ประวัติการขีดฆ่าทั้งหมดของ Habit นี้จะหายไป ถ้าแค่ไม่อยากเห็นในตาราง ให้เลือก "เก็บถาวร" แทน</p><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ลบถาวร</button></div>';}
+  if(m.type==="reset") b='<h2 id="mt">ล้างข้อมูลทั้งหมด ?</h2><p>ลบข้อมูลที่เลือก ไม่สามารถเลิกทำได้ ควรสำรองข้อมูลก่อน</p><select id="modalSel" aria-label="ส่วนที่จะล้าง"><option value="all">ล้างทั้งหมด (Study + Habit)</option><option value="study">เฉพาะ Study (วิชา เวลาอ่าน Pipeline)</option><option value="habit">เฉพาะ Habit</option></select><div class="acts"><button class="btn" data-act="modal-cancel" data-autofocus>ยกเลิก</button><button class="btn primary" data-act="modal-ok">ล้างข้อมูล</button></div>';
   return '<div class="scrim" data-act="scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">'+b+'</div></div>';
 }
 /* ---------- render ---------- */
 function render(){
   var ae=document.activeElement, fk=ae&&ae.dataset?ae.dataset.fk:null, sy=window.scrollY;
   var h=headerHtml();
-  if(!S.setup) h+=setupHtml();
+  var hsEl=document.querySelector(".hbscroll"); if(hsEl) U.hbScroll=hsEl.scrollLeft;
+  if(U.sec==="home") h+=homeHtml();
+  else if(U.sec==="habit") h+=habitHtml();
+  else if(!S.setup) h+=setupHtml();
   else{
     h+=navHtml();
-    h+=U.view==="overview"?overviewHtml():U.view==="topics"?topicsHtml():U.view==="timer"?timerHtml():U.view==="pipeline"?pipelineHtml():dataHtml();
+    h+=U.view==="topics"?topicsHtml():U.view==="timer"?timerHtml():U.view==="pipeline"?pipelineHtml():overviewHtml();
   }
   $("#root").innerHTML=h;
   $("#modalRoot").innerHTML=U.modal?modalHtml():"";
@@ -920,6 +1119,7 @@ function render(){
   if(fk){var el=document.querySelector('[data-fk="'+fk+'"]'); if(el) el.focus({preventScroll:true});}
   if(U.modal){var f=document.querySelector("#modalRoot [data-autofocus]"); if(f) f.focus();}
   window.scrollTo(0,sy);
+  if(U.sec==="habit"){var hs2=document.querySelector(".hbscroll"); if(hs2){ if(U.hbScroll==null){var tc=hs2.querySelector("th.today"); if(tc) hs2.scrollLeft=Math.max(0,tc.offsetLeft-hs2.clientWidth/2); } else hs2.scrollLeft=U.hbScroll; }}
 }
 /* ---------- actions ---------- */
 function addTopic(sid){
@@ -948,12 +1148,23 @@ function modalOk(){
     var target=$("#modalSel").value; snapshot();
     S.subjects.forEach(function(s){s.topics.forEach(function(t){t.items.forEach(function(it){if(it.stage===m.id) it.stage=target;});});});
     removeStage(m.id); U.modal=null; render(); toast("ลบขั้นตอนและย้ายหัวข้อย่อย 2 แล้ว",true);
+  } else if(m.type==="habit"){
+    habitSave(m);
+  } else if(m.type==="hb-del"){
+    snapshot(); S.habits=S.habits.filter(function(x){return x.id!==m.id;}); save(); U.modal=null; render(); toast("ลบ Habit แล้ว",true);
   } else if(m.type==="log-add"||m.type==="log-edit"){
     logSave(m);
   } else if(m.type==="tm-reset"){
     resetTimer(); U.modal=null; render();
   } else if(m.type==="reset"){
-    S=fresh(); T=freshT(); saveT(); U={view:"setup",subj:"all",filter:"all",near:false,fold:{},modal:null,draft:null}; try{localStorage.removeItem(KEY);}catch(e){delete mem[KEY];} render(); toast("ล้างข้อมูลแล้ว");
+    var scope=$("#modalSel").value;
+    if(scope==="habit"){S.habits=[]; save(); U.modal=null; render(); toast("ล้าง Habit ทั้งหมดแล้ว");}
+    else{
+      var keepH=scope==="study"?S.habits:[]; S=fresh(); S.habits=keepH; T=freshT(); saveT();
+      U={sec:"study",view:"setup",subj:"all",filter:"all",near:false,fold:{},modal:null,draft:null}; setHash("study");
+      if(keepH.length) save(); else {try{localStorage.removeItem(KEY);}catch(e){delete mem[KEY];}}
+      render(); toast("ล้างข้อมูลแล้ว");
+    }
   }
 }
 function removeStage(id){
@@ -966,7 +1177,7 @@ function importNow(){
   var txt=($("#importText").value||"").trim();
   if(!txt){toast("วางข้อมูลหรือเลือกไฟล์ก่อน");return;}
   try{
-    var n=normalize(JSON.parse(txt)); snapshot(); S=n; U.subj="all"; U.filter="all"; U.near=false; save(); U.view="overview"; render(); toast("นำเข้าข้อมูลแล้ว",true);
+    var o=JSON.parse(txt), n=normalize(o); if(!Array.isArray(o.habits)) n.habits=S.habits; snapshot(); S=n; U.subj="all"; U.filter="all"; U.near=false; save(); U.view="overview"; U.sec="study"; setHash("study"); render(); toast("นำเข้าข้อมูลแล้ว",true);
   }catch(e){toast("นำเข้าไม่ได้: "+(typeof e==="string"?e:"รูปแบบข้อมูลไม่ถูกต้อง"));}
 }
 document.addEventListener("click",function(e){
@@ -975,7 +1186,7 @@ document.addEventListener("click",function(e){
   if(a==="scrim"){ if(e.target===b) closeModal(); return; }
   switch(a){
   case "theme": var nt=effTheme()==="dark"?"light":"dark"; document.documentElement.setAttribute("data-theme",nt); lsSet(TKEY,nt); render(); break;
-  case "nav": U.view=d.v; render(); break;
+  case "nav": U.view=d.v; U.sec="study"; render(); break;
   case "go-stage": U.view="topics"; U.subj="all"; U.filter=d.st; U.near=false; render(); break;
   case "go-near": U.view="topics"; U.subj="all"; U.filter="all"; U.near=true; render(); break;
   case "open-subj": U.view="topics"; U.subj=d.s; U.filter="all"; U.near=false; render(); window.scrollTo(0,0); break;
@@ -1029,6 +1240,22 @@ document.addEventListener("click",function(e){
     if(lx){U.modal={type:"log-edit",id:lx.id,s:lx.s,it:lx.it}; render();} break;
   case "log-del":
     snapshot(); S.sessions=S.sessions.filter(function(q){return q.id!==d.id;}); save(); render(); toast("ลบรายการอ่านแล้ว",true); break;
+  case "go": goSec(d.sec); break;
+  case "hb-prev": case "hb-next":
+    var hm=HM(), nm2=hm.y*12+hm.m+(a==="hb-prev"?-1:1), nw=new Date();
+    if(nm2>nw.getFullYear()*12+nw.getMonth()) break;
+    U.hm={y:Math.floor(nm2/12),m:nm2%12}; U.hbScroll=null; render(); break;
+  case "hb-today": U.hm=null; U.hbScroll=null; render(); break;
+  case "hb-add": U.modal={type:"habit",id:null,name:"",emoji:"✅",color:1,days:[0,1,2,3,4,5,6]}; render(); break;
+  case "hb-edit": var he=findHabit(d.id); if(he){U.modal={type:"habit",id:he.id,name:he.name,emoji:he.emoji,color:he.color,days:he.days.slice()}; render();} break;
+  case "hb-emoji": readHabitForm(U.modal); U.modal.emoji=d.e; U.modal.err=null; render(); break;
+  case "hb-color": readHabitForm(U.modal); U.modal.color=+d.k; render(); break;
+  case "hb-days": readHabitForm(U.modal); U.modal.days=d.p==="all"?[0,1,2,3,4,5,6]:d.p==="wk"?[1,2,3,4,5]:[0,6]; U.modal.err=null; render(); break;
+  case "hb-toggle":
+    var ht=findHabit(d.id); if(ht&&d.d<=todayStr()){ if(ht.done[d.d]) delete ht.done[d.d]; else ht.done[d.d]=1; save(); render(); } break;
+  case "hb-archive": var ha=findHabit(d.id); if(ha){snapshot(); ha.archived=true; save(); U.modal=null; render(); toast("เก็บถาวร \""+ha.name+"\" แล้ว",true);} break;
+  case "hb-restore": var hr=findHabit(d.id); if(hr){hr.archived=false; save(); render(); toast("กู้คืน \""+hr.name+"\" แล้ว");} break;
+  case "hb-del-ask": if(findHabit(d.id)){U.modal={type:"hb-del",id:d.id}; render();} break;
   case "tm-start": startPhase("read"); render(); break;
   case "tm-toggle":
     var tn=Date.now();
@@ -1096,6 +1323,7 @@ document.addEventListener("keydown",function(e){
   if(t.id==="newTopic"){e.preventDefault(); var b=document.querySelector('[data-act="add-topic"]'); if(b) addTopic(b.dataset.s);}
   else if(t.classList&&t.classList.contains("newitem")){e.preventDefault(); addItem(t.dataset.s,t.dataset.tp);}
   else if(t.id==="modalInput"){e.preventDefault(); modalOk();}
+  else if(t.id==="hbName"){e.preventDefault(); modalOk();}
   else if(t.classList&&(t.classList.contains("tname")||t.classList.contains("sname")||t.classList.contains("tn"))){t.blur();}
 });
 render();
